@@ -1,0 +1,230 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETStandard,Version=v2.1": {
+      "PPv2URPConverters/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.1",
+        "dependencies": {
+          "Unity.RenderPipelines.Universal.Editor": "1.0.0",
+          "Unity.RenderPipelines.Universal.Runtime": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/PPv2URPConverters.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/PPv2URPConverters.dll": {}
+        }
+      },
+      "Unity.RenderPipeline.Universal.ShaderLibrary/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.1",
+        "compile": {
+          "bin/placeholder/Unity.RenderPipeline.Universal.ShaderLibrary.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Unity.RenderPipeline.Universal.ShaderLibrary.dll": {}
+        }
+      },
+      "Unity.RenderPipelines.Universal.2D.Editor.Overrides/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.1",
+        "dependencies": {
+          "Unity.RenderPipelines.Universal.2D.Runtime": "1.0.0",
+          "Unity.RenderPipelines.Universal.Runtime": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Unity.RenderPipelines.Universal.2D.Editor.Overrides.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Unity.RenderPipelines.Universal.2D.Editor.Overrides.dll": {}
+        }
+      },
+      "Unity.RenderPipelines.Universal.2D.Runtime/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.1",
+        "dependencies": {
+          "Unity.RenderPipeline.Universal.ShaderLibrary": "1.0.0",
+          "Unity.RenderPipelines.Universal.Runtime": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Unity.RenderPipelines.Universal.2D.Runtime.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Unity.RenderPipelines.Universal.2D.Runtime.dll": {}
+        }
+      },
+      "Unity.RenderPipelines.Universal.Editor/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.1",
+        "dependencies": {
+          "Unity.RenderPipelines.Universal.2D.Runtime": "1.0.0",
+          "Unity.RenderPipelines.Universal.Runtime": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Unity.RenderPipelines.Universal.Editor.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Unity.RenderPipelines.Universal.Editor.dll": {}
+        }
+      },
+      "Unity.RenderPipelines.Universal.Runtime/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.1",
+        "dependencies": {
+          "Unity.RenderPipeline.Universal.ShaderLibrary": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Unity.RenderPipelines.Universal.Runtime.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Unity.RenderPipelines.Universal.Runtime.dll": {}
+        }
+      },
+      "Unity.RenderPipelines.Universal.Shaders/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.1",
+        "compile": {
+          "bin/placeholder/Unity.RenderPipelines.Universal.Shaders.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Unity.RenderPipelines.Universal.Shaders.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "PPv2URPConverters/1.0.0": {
+      "type": "project",
+      "path": "PPv2URPConverters.csproj",
+      "msbuildProject": "PPv2URPConverters.csproj"
+    },
+    "Unity.RenderPipeline.Universal.ShaderLibrary/1.0.0": {
+      "type": "project",
+      "path": "Unity.RenderPipeline.Universal.ShaderLibrary.csproj",
+      "msbuildProject": "Unity.RenderPipeline.Universal.ShaderLibrary.csproj"
+    },
+    "Unity.RenderPipelines.Universal.2D.Editor.Overrides/1.0.0": {
+      "type": "project",
+      "path": "Unity.RenderPipelines.Universal.2D.Editor.Overrides.csproj",
+      "msbuildProject": "Unity.RenderPipelines.Universal.2D.Editor.Overrides.csproj"
+    },
+    "Unity.RenderPipelines.Universal.2D.Runtime/1.0.0": {
+      "type": "project",
+      "path": "Unity.RenderPipelines.Universal.2D.Runtime.csproj",
+      "msbuildProject": "Unity.RenderPipelines.Universal.2D.Runtime.csproj"
+    },
+    "Unity.RenderPipelines.Universal.Editor/1.0.0": {
+      "type": "project",
+      "path": "Unity.RenderPipelines.Universal.Editor.csproj",
+      "msbuildProject": "Unity.RenderPipelines.Universal.Editor.csproj"
+    },
+    "Unity.RenderPipelines.Universal.Runtime/1.0.0": {
+      "type": "project",
+      "path": "Unity.RenderPipelines.Universal.Runtime.csproj",
+      "msbuildProject": "Unity.RenderPipelines.Universal.Runtime.csproj"
+    },
+    "Unity.RenderPipelines.Universal.Shaders/1.0.0": {
+      "type": "project",
+      "path": "Unity.RenderPipelines.Universal.Shaders.csproj",
+      "msbuildProject": "Unity.RenderPipelines.Universal.Shaders.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETStandard,Version=v2.1": [
+      "PPv2URPConverters >= 1.0.0",
+      "Unity.RenderPipeline.Universal.ShaderLibrary >= 1.0.0",
+      "Unity.RenderPipelines.Universal.2D.Editor.Overrides >= 1.0.0",
+      "Unity.RenderPipelines.Universal.2D.Runtime >= 1.0.0",
+      "Unity.RenderPipelines.Universal.Editor >= 1.0.0",
+      "Unity.RenderPipelines.Universal.Runtime >= 1.0.0",
+      "Unity.RenderPipelines.Universal.Shaders >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\PICHAU\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Assembly-CSharp.csproj",
+      "projectName": "Assembly-CSharp",
+      "projectPath": "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Assembly-CSharp.csproj",
+      "packagesPath": "C:\\Users\\PICHAU\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Temp\\obj\\Assembly-CSharp\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\PICHAU\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "netstandard2.1"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "projectReferences": {
+            "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\PPv2URPConverters.csproj": {
+              "projectPath": "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\PPv2URPConverters.csproj"
+            },
+            "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Unity.RenderPipeline.Universal.ShaderLibrary.csproj": {
+              "projectPath": "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Unity.RenderPipeline.Universal.ShaderLibrary.csproj"
+            },
+            "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Unity.RenderPipelines.Universal.2D.Editor.Overrides.csproj": {
+              "projectPath": "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Unity.RenderPipelines.Universal.2D.Editor.Overrides.csproj"
+            },
+            "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Unity.RenderPipelines.Universal.2D.Runtime.csproj": {
+              "projectPath": "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Unity.RenderPipelines.Universal.2D.Runtime.csproj"
+            },
+            "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Unity.RenderPipelines.Universal.Editor.csproj": {
+              "projectPath": "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Unity.RenderPipelines.Universal.Editor.csproj"
+            },
+            "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Unity.RenderPipelines.Universal.Runtime.csproj": {
+              "projectPath": "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Unity.RenderPipelines.Universal.Runtime.csproj"
+            },
+            "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Unity.RenderPipelines.Universal.Shaders.csproj": {
+              "projectPath": "C:\\Users\\PICHAU\\TheLastSpring\\TheLastSpring\\Unity.RenderPipelines.Universal.Shaders.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      },
+      "SdkAnalysisLevel": "10.0.100"
+    },
+    "frameworks": {
+      "netstandard2.1": {
+        "targetAlias": "netstandard2.1",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100-rc.1.25451.107\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}
