@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 public class EnemyIA : MonoBehaviour
 {
-
+    [SerializeField] private float roamChangeDirFloat = 2f;
+    
     private enum State
     {
         Roaming
@@ -30,7 +31,7 @@ public class EnemyIA : MonoBehaviour
         {
             Vector2 roamPosition = GetRoamingPosition();
             enemyPathFinding.MoveTo(roamPosition);
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(roamChangeDirFloat);
         }
     }
 

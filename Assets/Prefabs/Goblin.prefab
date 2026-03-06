@@ -223,6 +223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   startingHealth: 3
+  deathVFXPrefab: {fileID: 9197899794915006527, guid: 9b57971ee9bd36b4f980d08fa3a44c00, type: 3}
 --- !u!114 &-4417218091248043141
 MonoBehaviour:
   m_ObjectHideFlags: 0
