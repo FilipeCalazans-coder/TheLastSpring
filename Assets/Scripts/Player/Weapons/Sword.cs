@@ -57,14 +57,28 @@ public class Sword : MonoBehaviour
 
     private void Attack()
     {
+        // Verificamos se o botão está apertado E se não estamos no meio de um cooldown
         if (attackButtonDown && !isAttacking)
         {
-            isAttacking = true;
-            myAnimator.SetTrigger("Attack");
-            weaponCollider.gameObject.SetActive(true);
-            slashAnim = Instantiate(slashAnimPrefab, slashAnimSpawnPoint.position, Quaternion.identity);
-            slashAnim.transform.parent = this.transform.parent;
-            StartCoroutine(AttackCDRoutine());
+            // Buscamos a estamina no pai (Player)
+            PlayerStamina stamina = GetComponentInParent<PlayerStamina>();
+
+            // TENTAMOS gastar estamina. Se retornar 'true', o ataque acontece.
+            if (stamina != null && stamina.TrySpendStamina(15f))
+            {
+                isAttacking = true;
+                myAnimator.SetTrigger("Attack");
+                weaponCollider.gameObject.SetActive(true);
+                
+                slashAnim = Instantiate(slashAnimPrefab, slashAnimSpawnPoint.position, Quaternion.identity);
+                slashAnim.transform.parent = this.transform.parent;
+                
+                StartCoroutine(AttackCDRoutine());
+            }
+            else if (stamina == null)
+            {
+                Debug.LogWarning("PlayerStamina não encontrado no Player!");
+            }
         }
     }
 

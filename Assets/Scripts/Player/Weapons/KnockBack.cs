@@ -16,6 +16,11 @@ public class KnockBack : MonoBehaviour
 
     public void GetKnockedBack(Transform damageSource, float knockBackThrust)
     {
+        EnemyIA enemyIA = GetComponent<EnemyIA>();
+        if (enemyIA != null)
+        {
+            enemyIA.StopMoving(0.2f); // Para a IA por 0.2 segundos (tempo do pulo para trás)
+        }
         GettingKnockedBack = true;
         Vector2 difference = (transform.position - damageSource.position).normalized * knockBackThrust * rb.mass;
         rb.AddForce(difference, ForceMode2D.Impulse);

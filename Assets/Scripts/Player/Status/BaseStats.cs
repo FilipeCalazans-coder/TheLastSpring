@@ -19,10 +19,17 @@ public class BaseStats : MonoBehaviour
         _statsDict.Clear();
         foreach (var stat in playerStats)
         {
-            // Verificamos se o tipo não é nulo para evitar erros no Inspector
-            if (stat.type != null && !_statsDict.ContainsKey(stat.type))
+            // SEGURANÇA: Verifica se você não deixou um slot vazio no Inspector
+            if (stat != null && stat.type != null) 
             {
-                _statsDict.Add(stat.type, stat);
+                if (!_statsDict.ContainsKey(stat.type))
+                {
+                    _statsDict.Add(stat.type, stat);
+                }
+            }
+            else
+            {
+                Debug.LogError($"Existe um slot de Status vazio no objeto {gameObject.name}!");
             }
         }
     }
@@ -31,19 +38,31 @@ public class BaseStats : MonoBehaviour
     {
         if (_statsDict.TryGetValue(type, out Stat stat))
         {
-            return stat.baseValue;
+            // Retornamos o valor já com a porcentagem aplicada
+            return stat.CalculatedValue;
         }
         
-        Debug.LogWarning($"O status {type.statName} não foi encontrado no Player!");
+        Debug.LogWarning($"O status {type.statName} não foi encontrado!");
         return 0;
     }
 
+// Novo método para subir porcentagem (ex: um buff ou passiva)
+    public void AddStatPercentage(StatType type, float percentAmount)
+    {
+        if (_statsDict.TryGetValue(type, out Stat stat))
+        {
+            stat.AddPercentModifier(percentAmount);
+            Debug.Log($"{type.statName} agora tem bônus de {percentAmount * 100}%");
+        }
+    }
+
+    // Verifique se está EXATAMENTE assim no BaseStats.cs
     public void AddStatPoint(StatType type, int amount)
     {
         if (_statsDict.TryGetValue(type, out Stat stat))
         {
-            stat.baseValue += amount;
-            Debug.Log($"{type.statName} subiu para {stat.baseValue}!");
+            stat.AddBaseValue(amount); // Ou stat.baseValue += amount se você não criou o método
+            Debug.Log($"{type.statName} subiu para {stat.CalculatedValue}!");
         }
     }
 }

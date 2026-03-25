@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: edd2abf3c1736004bac90ded2227a4e6
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - deathVFXPrefab: {instanceID: 0}
+  - defenseStatType: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

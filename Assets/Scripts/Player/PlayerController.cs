@@ -85,21 +85,46 @@ public class PlayerController : MonoBehaviour
 
     private void Dash()
     {
-        if (!isDashing)
-        isDashing = true;
-        moveSpeed *= dashSpeed;
-        myTrailRenderer.emitting = true;
-        StartCoroutine(EndDashRoutine());
+        // Se já estiver dando dash ou não tiver estamina suficiente, cancela
+        if (isDashing) return;
+
+        PlayerStamina stamina = GetComponent<PlayerStamina>();
+        
+        // Tentamos gastar 25 de estamina
+        if (stamina != null && stamina.TrySpendStamina(25f))
+        {
+            StartCoroutine(DashRoutine());
+        }
     }
 
-    private IEnumerator EndDashRoutine()
+    private IEnumerator DashRoutine()
     {
-        float dashTime = 0.2f;
-        float dashCD = 0.25f;
-        yield return new WaitForSeconds(dashTime);
+        isDashing = true;
+        
+        // BUSCAMOS o script de vida para ligar a invencibilidade
+        PlayerHealth health = GetComponent<PlayerHealth>();
+        yield return new WaitForSeconds(0.05f); // Pequeno atraso antes de ficar invencível
+        if (health != null) health.isInvulnerable = true;
+        // No início do Dash
+        mySpriteRenderer.color = new Color(1f, 1f, 1f, 0.5f); // 50% de transparência
+
+        moveSpeed *= dashSpeed;
+        myTrailRenderer.emitting = true;
+
+        // Duração do Dash (e dos I-Frames)
+        yield return new WaitForSeconds(0.1f); // Janela real de invencibilidade (curta!)
+        
         moveSpeed = startingMoveSpeed;
         myTrailRenderer.emitting = false;
-        yield return new WaitForSeconds(dashCD);
+
+        // DESLIGAMOS a invencibilidade assim que o dash acaba
+        if (health != null) health.isInvulnerable = false;
+        yield return new WaitForSeconds(0.05f); // Vulnerável no final do movimento
+        // No final do Dash
+        mySpriteRenderer.color = new Color(1f, 1f, 1f, 1f); // Volta ao normal
+
+        // Tempo de espera para usar de novo
+        yield return new WaitForSeconds(0.25f);
         isDashing = false;
     }
 }
