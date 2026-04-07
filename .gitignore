@@ -6,6 +6,8 @@
 [Ll]ogs/
 UserSettings/
 
+MemoryCaptures/
+
 *.csproj
 *.unityproj
 *.sln
@@ -17,6 +19,7 @@ UserSettings/
 *.booproj
 *.svd
 *.pdb
-*.mdb
-*.opendb
-*.VC.db
+
+.DS_Store
+.idea/
+.vscode/
