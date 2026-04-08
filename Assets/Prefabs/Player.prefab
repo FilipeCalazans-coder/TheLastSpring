@@ -353,7 +353,6 @@ GameObject:
   - component: {fileID: 480863368338016894}
   - component: {fileID: 4500700255550932335}
   - component: {fileID: -3310860612244009197}
-  - component: {fileID: 8961456093466113085}
   - component: {fileID: -5414621525420059557}
   - component: {fileID: -2016329908154551630}
   m_Layer: 0
@@ -578,24 +577,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerProgression
   characterLevel: 1
-  availablePoints: 0
-  baseLevelUpCost: 100
+  baseLevelCost: 100
   costMultiplier: 1.2
   currentSouls: 0
---- !u!114 &8961456093466113085
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7927590742725733764}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04b637d0013171b4c92e6e328ab61c60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelUpController
-  attackStat: {fileID: 11400000, guid: b1741f6794047844d86d3d334ce90e5f, type: 2}
-  defenseStat: {fileID: 11400000, guid: 425ebc5196f8f6347b72883fb25acc1b, type: 2}
+  soulDropPrefab: {fileID: 6229344182318727302, guid: 565ea6a2e19849848b65d5304834e58d, type: 3}
 --- !u!114 &-5414621525420059557
 MonoBehaviour:
   m_ObjectHideFlags: 0

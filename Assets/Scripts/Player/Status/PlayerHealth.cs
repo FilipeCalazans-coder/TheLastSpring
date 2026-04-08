@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -70,10 +71,24 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    private void Die()
+   private void Die()
     {
-        Debug.LogError("Player Morreu!");
+        GetComponent<PlayerProgression>().SaveProgression(); // SALVA PRIMEIRO
+        // 1. Drop das almas
+        GetComponent<PlayerProgression>().DropSoulsOnDeath();
 
+        // 2. Transição visual
+        if (SceneFader.Instance != null)
+        {
+            SceneFader.Instance.FadeAndLoadScene("Test");
+        }
+
+        // 3. Reset de Status para o Respawn
+        _currentHealth = GetMaxHealth(); // Restaura a vida
+        UpdateUI();
+        
+        // 4. Teleporte (Opcional: crie um objeto "SpawnPoint" na cena)
+        transform.position = new Vector3(0, 0, 0); // Posição inicial do mapa
     }
 
     public void SetHealthBar(Slider bar)

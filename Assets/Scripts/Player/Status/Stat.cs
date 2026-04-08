@@ -4,7 +4,7 @@ using UnityEngine;
 public class Stat
 {
     public StatType type;
-    [SerializeField] private int baseValue;
+    public int baseValue;
     [SerializeField] private float percentMultiplier = 0f; // 0.1f seria +10%
 
     public Stat(StatType type, int baseValue)
@@ -23,6 +23,7 @@ public class Stat
         }
     }
 
+    
     public void AddBaseValue(int amount) => baseValue += amount;
     
     public void AddPercentModifier(float percentage) => percentMultiplier += percentage;

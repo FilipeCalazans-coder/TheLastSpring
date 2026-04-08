@@ -4,14 +4,17 @@ public class PlayerProgression : MonoBehaviour
 {
     [Header("Nível do Personagem")]
     [SerializeField] private int characterLevel = 1;
-    [SerializeField] private int availablePoints = 0;
 
-    [Header("Configurações de Custo")]
-    [SerializeField] private int baseLevelUpCost = 100;
+    [Header("Configurações de Custo (Soulslike)")]
+    [SerializeField] private int baseLevelCost = 100;
     [SerializeField] private float costMultiplier = 1.2f;
 
     [Header("Recursos")]
     [SerializeField] private int currentSouls = 0;
+
+    [Header("Mecânica de Morte")]
+    [SerializeField] private GameObject soulDropPrefab;
+    private GameObject _currentActiveSoulDrop; // Guarda a referência da poça atual no mapa
 
     private BaseStats _stats;
 
@@ -19,49 +22,110 @@ public class PlayerProgression : MonoBehaviour
 
     public void AddSouls(int amount) => currentSouls += amount;
 
-    // O custo agora depende apenas do Nível Geral do Personagem
-    public int GetNextLevelCost()
+    // Cálculo de custo: Level 1 custa baseLevelCost, os próximos aumentam exponencialmente
+    public int GetRequiredSoulsForNextLevel()
     {
-        // Ex: Level 1 custa 100. Level 2 custa 100 * (2^1.2)...
-        return Mathf.RoundToInt(baseLevelUpCost * Mathf.Pow(characterLevel, costMultiplier));
+        return Mathf.RoundToInt(baseLevelCost * Mathf.Pow(costMultiplier, characterLevel - 1));
     }
 
-    // Função para comprar um Level Geral
-    public void BuyLevel()
+    public bool CanAffordUpgrade()
     {
-        int cost = GetNextLevelCost();
+        return currentSouls >= GetRequiredSoulsForNextLevel();
+    }
+
+    // Método principal: Você escolhe o que quer upar e paga com almas
+    public void AllocatePoint(StatType stat)
+    {
+        int cost = GetRequiredSoulsForNextLevel();
 
         if (currentSouls >= cost)
         {
-            currentSouls -= cost;
-            characterLevel++;
-            availablePoints++; // Ganha um ponto para gastar
-            Debug.Log($"<color=green>Subiu para o Level {characterLevel}! Pontos disponíveis: {availablePoints}</color>");
+            currentSouls -= cost; // Paga o custo
+            characterLevel++;      // O nível do personagem sobe
+            
+            if(_stats != null)
+            {
+                _stats.UpgradeStat(stat); // Aumenta o atributo real (HP, ATK, etc)
+            }
+
         }
         else
         {
-            Debug.Log($"<color=red>Faltam {cost - currentSouls} almas para o próximo nível.</color>");
+            Debug.Log($"<color=red>Almas insuficientes! Precisa de {cost}, mas você tem {currentSouls}.</color>");
         }
     }
 
-    // Função para alocar o ponto que você ganhou
-    public void AllocatePoint(StatType type)
+    public void DropSoulsOnDeath()
     {
-        if (availablePoints > 0)
+        // 1. Verificações de segurança (essencial para evitar NullReference)
+        if (currentSouls <= 0 || soulDropPrefab == null) return;
+
+        // 2. DESATIVA O COLLIDER DO PLAYER para evitar que ele colete as próprias almas instantaneamente
+        Collider2D playerCollider = GetComponent<Collider2D>();
+        if (playerCollider != null) 
         {
-            availablePoints--;
-            _stats.AddStatPoint(type, 1);
-            Debug.Log($"Ponto alocado em {type.statName}. Restam: {availablePoints}");
+            playerCollider.enabled = false; 
+            Debug.Log("<color=orange>Collider do Player desativado para evitar auto-coleta.</color>");
         }
-        else
+
+        // 3. Gerenciamento da poça antiga (Regra Soulslike)
+        if (_currentActiveSoulDrop != null) 
         {
-            Debug.Log("Você não tem pontos de atributo disponíveis! Suba de nível primeiro.");
+            Destroy(_currentActiveSoulDrop);
         }
+
+        // 4. Instancia a nova poça
+        _currentActiveSoulDrop = Instantiate(soulDropPrefab, transform.position, Quaternion.identity);
+        
+        // 5. Inicializa com as almas atuais
+        if (_currentActiveSoulDrop.TryGetComponent(out SoulDrop soulScript))
+        {
+            soulScript.Initialize(currentSouls);
+        }
+
+        // 6. Zera o saldo do player
+        currentSouls = 0; 
     }
 
+   public void SaveProgression()
+    {
+        GameData.PlayerLevel = characterLevel;
+        
+        // REGRA SOULSLIKE: Ao salvar para o respawn, o saldo deve ser zero
+        // porque as almas agora pertencem à poça no chão.
+        GameData.CurrentSouls = 0; 
 
-    public int GetAvailablePoints() => availablePoints;
+        // Salva os atributos (força, vida, etc)
+        GameData.SavedStats.Clear();
+        _stats = GetComponent<BaseStats>();
+        if (_stats != null)
+        {
+            foreach (var stat in _stats.GetPlayerStatsList())
+            {
+                GameData.SavedStats.Add(stat.type, stat.baseValue);
+            }
+        }
+
+        GameData.HasSaveData = true;
+    }
+
+    private void Start()
+    {
+        _stats = GetComponent<BaseStats>();
+
+        if (GameData.HasSaveData)
+        {
+            characterLevel = GameData.PlayerLevel;
+            currentSouls = GameData.CurrentSouls;
+            
+            // CARREGAR ATRIBUTOS: Passa os valores salvos para o BaseStats
+            if (_stats != null)
+            {
+                _stats.LoadSerializedStats(GameData.SavedStats); // Criaremos esse método abaixo
+            }
+        }
+    }
+    // Getters para a UI
     public int GetCurrentLevel() => characterLevel;
-
     public int GetCurrentSouls() => currentSouls;
 }

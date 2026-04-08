@@ -7,6 +7,7 @@ public class LevelUpUI : MonoBehaviour
     [Header("Referências de Texto")]
     [SerializeField] private TextMeshProUGUI pointsText;
     [SerializeField] private TextMeshProUGUI atkText, defText, vitText, resText;
+    [SerializeField] private TextMeshProUGUI characterLevelText;
 
     [Header("Painel Visual")]
     [SerializeField] private GameObject visualPanel; // O painel cinza
@@ -30,9 +31,9 @@ public class LevelUpUI : MonoBehaviour
     private void OnEnable()
     {
         _playerControls.Enable();
-        _playerControls.Menu.Enable(); 
+        _playerControls.Menu.Enable(); // Garante que a tecla de abrir/fechar sempre funcione
     }
-
+    
     private void Start()
     {
         if (PlayerController.Instance != null)
@@ -76,7 +77,16 @@ public class LevelUpUI : MonoBehaviour
     {
         if (_progression == null || _stats == null) return;
 
-        pointsText.text = "Pontos Disponíveis: " + _progression.GetAvailablePoints();
+        int currentSouls = _progression.GetCurrentSouls();
+        int required = _progression.GetRequiredSoulsForNextLevel();
+
+        pointsText.text = $"Almas: {currentSouls} / Necessário: {required}";
+        
+        // ATUALIZAÇÃO: Mostra o nível atual na janela de atributos
+        characterLevelText.text = "Nível: " + _progression.GetCurrentLevel();
+
+        pointsText.color = currentSouls >= required ? Color.white : Color.red;
+
         atkText.text = "Ataque: " + _stats.GetStatValue(atkType);
         defText.text = "Defesa: " + _stats.GetStatValue(defType) + "%";
         vitText.text = "Vitalidade: " + _stats.GetStatValue(vitType);
