@@ -83,17 +83,22 @@ public class PlayerProgression : MonoBehaviour
             soulScript.Initialize(currentSouls);
         }
 
-        // 6. Zera o saldo do player
+        // 6. Zera o saldo do player localmente
         currentSouls = 0; 
+
+        // 7. ATUALIZA O GAMEDATA IMEDIATAMENTE (O pulo do gato!)
+        GameData.CurrentSouls = 0;
+        
+        // Opcional: Se você quiser que o nível e atributos também sejam gravados na morte:
+        SaveProgression(); 
+        
     }
 
    public void SaveProgression()
     {
         GameData.PlayerLevel = characterLevel;
         
-        // REGRA SOULSLIKE: Ao salvar para o respawn, o saldo deve ser zero
-        // porque as almas agora pertencem à poça no chão.
-        GameData.CurrentSouls = 0; 
+       GameData.CurrentSouls = this.currentSouls;
 
         // Salva os atributos (força, vida, etc)
         GameData.SavedStats.Clear();
@@ -117,6 +122,10 @@ public class PlayerProgression : MonoBehaviour
         {
             characterLevel = GameData.PlayerLevel;
             currentSouls = GameData.CurrentSouls;
+
+            this.characterLevel = GameData.PlayerLevel;
+            this.currentSouls = GameData.CurrentSouls; // CARREGA AS ALMAS DE VOLTA
+        // Atualiza a UI de almas aqui se necessário
             
             // CARREGAR ATRIBUTOS: Passa os valores salvos para o BaseStats
             if (_stats != null)
