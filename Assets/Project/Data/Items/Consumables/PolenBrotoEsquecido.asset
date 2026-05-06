@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89517f5cd08fd674f85a1b09ad525af7, type: 3}
+  m_Name: PolenBrotoEsquecido
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Inventory.ItemData
+  itemName: "P\xF3len de um Broto Esquecido"
+  description: "O vest\xEDgio vital de uma muda que nunca conheceu o calor do sol,
+    sufocada precocemente pelas ra\xEDzes invasoras da Espat\xF3dea. Embora pequeno,
+    este p\xF3len carrega o peso de um ciclo interrompido. Consuma para absorver
+    120 almas."
+  icon: {fileID: -2460741666225687260, guid: 8af48ac807496f348af63b0ac23a2ae9, type: 3}
+  isConsumable: 1
+  soulValue: 120
