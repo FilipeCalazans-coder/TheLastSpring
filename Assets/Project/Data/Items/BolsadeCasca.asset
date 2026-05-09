@@ -10,18 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 89517f5cd08fd674f85a1b09ad525af7, type: 3}
-  m_Name: PolenFlorValente
+  m_Name: BolsadeCasca
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Inventory.ItemData
-  itemName: "P\xF3len de uma Flor Valente"
-  description: "Um aglomerado vibrante de p\xF3len que brilha com uma determina\xE7\xE3o
-    incomum. Pertenceu a uma flor que se recusou a murchar mesmo quando as sombras
-    da Espat\xF3dea tocaram suas p\xE9talas. Consumir esta ess\xEAncia \xE9 herdar
-    um fragmento de sua resili\xEAncia. Concede 400 almas."
-  icon: {fileID: -5822428726612025589, guid: 95c9c0dad6c626443b745bd0e6612522, type: 3}
-  soulValue: 400
+  itemName: Bolsa de Casca
+  description: "Aumenta o invent\xE1rio em 6 slotes quando consumido."
+  icon: {fileID: 7364032599722937743, guid: 659f1f69dd2e23e4b82d14fecc962bf0, type: 3}
+  soulValue: 100
   isConsumable: 1
   canBeSold: 0
-  isInventoryExpansion: 0
+  isInventoryExpansion: 1
   slotsToGain: 6
   isSpeedBoost: 0
   speedMultiplier: 1.5

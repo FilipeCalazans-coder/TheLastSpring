@@ -9,6 +9,11 @@ public class MainMenuController : MonoBehaviour
 
     [Header("Referências de UI")]
     [SerializeField] private Button continueButton;
+    
+    // VARIÁVEIS MOVIDAS PARA DENTRO DA CLASSE
+    public GameObject mainMenuPanel;
+    public GameObject cutsceneManager; // Arraste aquele objeto vazio aqui
+    public GameObject cutscenePanel;   // Arraste o painel preto aqui
 
     private void Start()
     {
@@ -17,7 +22,7 @@ public class MainMenuController : MonoBehaviour
         {
             continueButton.interactable = GameData.HasSaveData;
             
-            // Dica de polimento: Se não tiver save, podemos deixar o botão meio transparente
+            // Dica de polimento: Se não tiver save, deixamos o botão meio transparente
             Color btnColor = continueButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().color;
             btnColor.a = GameData.HasSaveData ? 1f : 0.3f;
             continueButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().color = btnColor;
@@ -32,15 +37,18 @@ public class MainMenuController : MonoBehaviour
         GameData.HasSaveData = false;
         GameData.SavedStats.Clear();
 
-        // 2. Carregamos o jogo
-        Debug.Log("<color=green>Iniciando Nova Jornada de Fiorella...</color>");
-        SceneManager.LoadScene(gameSceneName);
+        // 2. Esconde o menu
+        mainMenuPanel.SetActive(false);
+
+        // 3. Liga a tela preta e o script da cutscene
+        // OBS: Não precisamos de LoadScene aqui! O CutsceneManager cuidará disso no final.
+        cutscenePanel.SetActive(true);
+        cutsceneManager.SetActive(true); 
     }
 
     public void ContinueGame()
     {
         // Como o Start já validou o botão, aqui apenas carregamos a cena.
-        // O Start() do Player na outra cena vai ler o GameData automaticamente!
         Debug.Log("<color=cyan>Carregando Memória do Jardim...</color>");
         SceneManager.LoadScene(gameSceneName);
     }

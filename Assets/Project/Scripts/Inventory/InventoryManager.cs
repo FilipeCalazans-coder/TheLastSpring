@@ -5,39 +5,65 @@ namespace Project.Scripts.Inventory
 {
     public class InventoryManager : MonoBehaviour
     {
-        [Header("Mochila da Fiorella")]
-        public List<ItemData> items = new List<ItemData>(); // Lista de itens carregados
+        [Header("Configurações de Capacidade")]
+        public int currentMaxSlots = 12; 
 
-        // Adiciona um item e avisa a UI para atualizar
+        [Header("Mochila da Fiorella")]
+        public List<ItemData> items = new List<ItemData>();
+
+        // Adiciona um item se houver espaço
         public void AddItem(ItemData newItem)
         {
-            items.Add(newItem);
-            Debug.Log($"<color=green>{newItem.itemName} adicionado ao inventário.</color>");
-            
-            // Procura a UI e manda atualizar os slots
-            Object.FindFirstObjectByType<InventoryUI>()?.UpdateUI();
+            if (items.Count < currentMaxSlots)
+            {
+                items.Add(newItem);
+                Object.FindFirstObjectByType<InventoryUI>()?.UpdateUI();
+            }
+            else
+            {
+                Debug.Log("<color=red>Mochila cheia! Não há espaço.</color>");
+            }
         }
 
-        // Lógica de Venda/Consumo: Transforma o item em almas no sistema de progressão
+        // Expande os slots do inventário
+        public void ExpandInventory(ItemData expansionItem)
+        {
+            currentMaxSlots += expansionItem.slotsToGain;
+            items.Remove(expansionItem); 
+            Object.FindFirstObjectByType<InventoryUI>()?.RefreshSlotCount();
+        }
+
+        // Vende ou consome almas
         public void SellItem(ItemData itemToSell)
         {
             if (items.Contains(itemToSell))
             {
-                // 1. Remove o item da lista
                 items.Remove(itemToSell);
-
-                // 2. Acessa o sistema de Level Up para adicionar as almas
                 PlayerProgression progression = Object.FindFirstObjectByType<PlayerProgression>();
                 if (progression != null)
                 {
                     progression.AddSouls(itemToSell.soulValue);
-                    progression.SaveProgression(); // Persistência: Garante que o GameData salvou a venda
+                    progression.SaveProgression();
                 }
-
-                Debug.Log($"<color=orange>Item {itemToSell.itemName} vendido/consumido por {itemToSell.soulValue} almas!</color>");
-
-                // 3. Atualiza o visual do inventário imediatamente
                 Object.FindFirstObjectByType<InventoryUI>()?.UpdateUI();
+            }
+        }
+
+        // --- NOVA CHAMADA DE VELOCIDADE ---
+        public void UseSpeedBoost(ItemData boostItem)
+        {
+            if (items.Contains(boostItem))
+            {
+                items.Remove(boostItem); // Remove a poção da mochila
+                Object.FindFirstObjectByType<InventoryUI>()?.UpdateUI(); // Atualiza a tela
+
+                // Encontra a Fiorella e manda ela aplicar o Buff nela mesma!
+                PlayerController player = Object.FindFirstObjectByType<PlayerController>(); 
+                if (player != null)
+                {
+                    player.ApplySpeedBuff(boostItem.speedMultiplier, boostItem.buffDuration);
+                    Debug.Log($"<color=cyan>Usou {boostItem.itemName}! Velocidade aumentada.</color>");
+                }
             }
         }
     }

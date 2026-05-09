@@ -16,6 +16,12 @@ MonoBehaviour:
   description: "Um gr\xE3o dourado que ainda carrega a lembran\xE7a da primavera.
     Apesar de fr\xE1gil e diminuto, cont\xE9m a energia vital necess\xE1ria para
     fortalecer as ra\xEDzes de Fiorella. Esmague-o para absorver 50 almas."
-  icon: {fileID: 6831354082765256808, guid: 8af48ac807496f348af63b0ac23a2ae9, type: 3}
-  isConsumable: 1
+  icon: {fileID: -4540022725524668120, guid: aaf3233d50f724948bcd8b006bc8d665, type: 3}
   soulValue: 50
+  isConsumable: 1
+  canBeSold: 0
+  isInventoryExpansion: 0
+  slotsToGain: 6
+  isSpeedBoost: 0
+  speedMultiplier: 1.5
+  buffDuration: 5

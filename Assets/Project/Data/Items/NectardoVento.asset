@@ -10,19 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 89517f5cd08fd674f85a1b09ad525af7, type: 3}
-  m_Name: PolenFlorValente
+  m_Name: NectardoVento
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Inventory.ItemData
-  itemName: "P\xF3len de uma Flor Valente"
-  description: "Um aglomerado vibrante de p\xF3len que brilha com uma determina\xE7\xE3o
-    incomum. Pertenceu a uma flor que se recusou a murchar mesmo quando as sombras
-    da Espat\xF3dea tocaram suas p\xE9talas. Consumir esta ess\xEAncia \xE9 herdar
-    um fragmento de sua resili\xEAncia. Concede 400 almas."
-  icon: {fileID: -5822428726612025589, guid: 95c9c0dad6c626443b745bd0e6612522, type: 3}
-  soulValue: 400
+  itemName: "N\xE9ctar do Vento"
+  description: Aumenta a velocidade de movimento por 10 segundos quando consumido.
+  icon: {fileID: -3835205988310561656, guid: d5de86e51d75f4d4f86be7bd7e1c9e28, type: 3}
+  soulValue: 150
   isConsumable: 1
   canBeSold: 0
   isInventoryExpansion: 0
   slotsToGain: 6
-  isSpeedBoost: 0
+  isSpeedBoost: 1
   speedMultiplier: 1.5
-  buffDuration: 5
+  buffDuration: 10

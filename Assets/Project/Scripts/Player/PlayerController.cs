@@ -2,32 +2,28 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-
 public class PlayerController : MonoBehaviour
 {
     public bool FacingLeft { get { return facingLeft; } }
     public static PlayerController Instance;
 
-    [SerializeField] private float moveSpeed = 1f;
-    [SerializeField] private float dashSpeed = 4f;
+    [Header("Configurações de Movimento")]
+    [SerializeField] private float baseMoveSpeed = 1f;
+    [SerializeField] private float dashSpeedMultiplier = 4f;
     [SerializeField] private TrailRenderer myTrailRenderer;
-
 
     private PlayerControls playerControls;
     private Vector2 movement;
     private Rigidbody2D rb;
     private Animator myAnimator;
     private SpriteRenderer mySpriteRenderer;
-    private float startingMoveSpeed;
+    private Camera _mainCamera; // OTIMIZAÇÃO: Guarda a câmera na memória
+    
+    private float _currentSpeed;
+    private float _itemSpeedMultiplier = 1f; 
+    
     private bool facingLeft = false;
     private bool isDashing = false;
-
-
-    private void Start()
-    {
-        playerControls.Combat.Dash.performed += _ => Dash();
-        startingMoveSpeed = moveSpeed;
-    }
 
     private void Awake()
     {
@@ -36,7 +32,12 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
         mySpriteRenderer = GetComponent<SpriteRenderer>();
-        
+        _mainCamera = Camera.main; // OTIMIZAÇÃO APLICADA AQUI
+    }
+
+    private void Start()
+    {
+        _currentSpeed = baseMoveSpeed;
     }
 
     private void OnEnable()
@@ -44,15 +45,20 @@ public class PlayerController : MonoBehaviour
         playerControls.Enable();
     }
 
+    private void OnDisable()
+    {
+        playerControls.Disable();
+    }
+
     private void Update()
     {
         PlayerInput();
+        AdjustPlayerFacingDirection(); // MOVIDO: Input do mouse deve ficar no Update!
     }
 
     private void FixedUpdate()
     {
-        AdjustPlayerFacingDirection();
-        Move();
+        Move(); // BLINDADO: FixedUpdate agora cuida EXCLUSIVAMENTE da física!
     }
 
     private void PlayerInput()
@@ -61,17 +67,26 @@ public class PlayerController : MonoBehaviour
 
         myAnimator.SetFloat("moveX", movement.x);
         myAnimator.SetFloat("moveY", movement.y);
+
+        if (playerControls.Combat.Dash.triggered)
+        {
+            Dash();
+        }
     }
 
     private void Move()
     {
-        rb.MovePosition(rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
+        float finalSpeed = _currentSpeed * _itemSpeedMultiplier;
+        rb.MovePosition(rb.position + movement * (finalSpeed * Time.fixedDeltaTime));
     }
 
     private void AdjustPlayerFacingDirection()
     {
+        if (_mainCamera == null) return; // Evita erros se a câmera sumir
+
         Vector3 mousePos = Input.mousePosition;
-        Vector3 playerScreenPos = Camera.main.WorldToScreenPoint(transform.position);
+        Vector3 playerScreenPos = _mainCamera.WorldToScreenPoint(transform.position);
+        
         if (mousePos.x < playerScreenPos.x)
         {
             mySpriteRenderer.flipX = true;
@@ -84,14 +99,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // --- SISTEMA DE DASH ---
     private void Dash()
     {
-        // Se já estiver dando dash ou não tiver estamina suficiente, cancela
         if (isDashing) return;
 
         PlayerStamina stamina = GetComponent<PlayerStamina>();
         
-        // Tentamos gastar 25 de estamina
         if (stamina != null && stamina.TrySpendStamina(25f))
         {
             StartCoroutine(DashRoutine());
@@ -102,30 +116,40 @@ public class PlayerController : MonoBehaviour
     {
         isDashing = true;
         
-        // BUSCAMOS o script de vida para ligar a invencibilidade
         PlayerHealth health = GetComponent<PlayerHealth>();
-        yield return new WaitForSeconds(0.05f); // Pequeno atraso antes de ficar invencível
+        yield return new WaitForSeconds(0.05f); 
+        
         if (health != null) health.isInvulnerable = true;
-        // No início do Dash
-        mySpriteRenderer.color = new Color(1f, 1f, 1f, 0.5f); // 50% de transparência
+        
+        mySpriteRenderer.color = new Color(1f, 1f, 1f, 0.5f); 
 
-        moveSpeed *= dashSpeed;
+        _currentSpeed = baseMoveSpeed * dashSpeedMultiplier;
         myTrailRenderer.emitting = true;
 
-        // Duração do Dash (e dos I-Frames)
-        yield return new WaitForSeconds(0.1f); // Janela real de invencibilidade (curta!)
+        yield return new WaitForSeconds(0.1f); 
         
-        moveSpeed = startingMoveSpeed;
+        _currentSpeed = baseMoveSpeed;
         myTrailRenderer.emitting = false;
 
-        // DESLIGAMOS a invencibilidade assim que o dash acaba
         if (health != null) health.isInvulnerable = false;
-        yield return new WaitForSeconds(0.05f); // Vulnerável no final do movimento
-        // No final do Dash
-        mySpriteRenderer.color = new Color(1f, 1f, 1f, 1f); // Volta ao normal
+        yield return new WaitForSeconds(0.05f); 
+        
+        mySpriteRenderer.color = new Color(1f, 1f, 1f, 1f); 
 
-        // Tempo de espera para usar de novo
         yield return new WaitForSeconds(0.25f);
         isDashing = false;
+    }
+
+    // --- SISTEMA DE BUFFS (Itens) ---
+    public void ApplySpeedBuff(float multiplier, float duration)
+    {
+        StartCoroutine(SpeedBuffRoutine(multiplier, duration));
+    }
+
+    private IEnumerator SpeedBuffRoutine(float multiplier, float duration)
+    {
+        _itemSpeedMultiplier = multiplier; 
+        yield return new WaitForSeconds(duration); 
+        _itemSpeedMultiplier = 1f; 
     }
 }

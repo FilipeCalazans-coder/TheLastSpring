@@ -1,69 +1,66 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem; // Necessário para o Novo Input System
+using UnityEngine.InputSystem;
 
 namespace Project.Scripts.Inventory
 {
     public class InventoryUI : MonoBehaviour
     {
         [Header("Referências da Interface")]
-        public GameObject inventoryPanel; // O painel principal que contém a grelha
-        public Transform itemsParent;     // O objeto "ItemsGrid"
-        public InventoryManager inventory; // Referência ao script do inventário
+        public GameObject inventoryPanel; 
+        public Transform itemsGrid;      // O objeto com o Grid Layout Group
+        public GameObject slotPrefab;    // Arraste o Prefab do seu InventorySlot aqui
+        public InventoryManager inventory; 
 
-        private InventorySlot[] slots;
-        
-        // Transformamos em pública para que o Mercador saiba se a mochila está aberta
+        private List<InventorySlot> _slots = new List<InventorySlot>();
         public bool isOpen = false; 
 
         void Start()
         {
-            // Coleta todas as 12 ranhuras que estão dentro do Grid
-            slots = itemsParent.GetComponentsInChildren<InventorySlot>();
-            
-            // Garante que o jogo comece com o inventário fechado
             inventoryPanel.SetActive(false);
+            RefreshSlotCount(); // Cria os 12 iniciais
         }
 
-        // Função original chamada automaticamente pelo Player Input (Tecla 'I')
+        // Cria ou remove slots visuais baseados no currentMaxSlots do Manager
+        public void RefreshSlotCount()
+        {
+            // 1. Limpa os slots antigos da lista e da tela
+            foreach (Transform child in itemsGrid) Destroy(child.gameObject);
+            _slots.Clear();
+
+            // 2. Cria a quantidade exata de slots que o player tem direito
+            for (int i = 0; i < inventory.currentMaxSlots; i++)
+            {
+                GameObject newSlot = Instantiate(slotPrefab, itemsGrid);
+                _slots.Add(newSlot.GetComponent<InventorySlot>());
+            }
+            
+            UpdateUI(); // Preenche com os itens que ela já tinha
+        }
+
         public void OnToggleInventory(InputValue value)
         {
-            if (value.isPressed)
-            {
-                ForceToggleInventory();
-            }
+            if (value.isPressed) ForceToggleInventory();
         }
 
-        // Nova função separada para que outros scripts (como o Mercador) possam abrir a mochila
         public void ForceToggleInventory()
         {
-            isOpen = !isOpen; // Inverte o estado (se estava aberto, fecha. Se estava fechado, abre)
+            isOpen = !isOpen;
             inventoryPanel.SetActive(isOpen);
-
-            if (isOpen)
-            {
-                UpdateUI();
-                Debug.Log("<color=yellow>Inventário Aberto!</color>");
-            }
-            else
-            {
-                Debug.Log("<color=yellow>Inventário Fechado!</color>");
-            }
+            if (isOpen) UpdateUI();
         }
 
-        // Atualiza os ícones na tela
         public void UpdateUI()
         {
-            for (int i = 0; i < slots.Length; i++)
+            for (int i = 0; i < _slots.Count; i++)
             {
-                // Se existe um item para este índice na lista, desenha-o
                 if (i < inventory.items.Count)
                 {
-                    slots[i].AddItem(inventory.items[i]);
+                    _slots[i].AddItem(inventory.items[i]);
                 }
-                // Caso contrário, esvazia a ranhura visual
                 else
                 {
-                    slots[i].ClearSlot();
+                    _slots[i].ClearSlot();
                 }
             }
         }

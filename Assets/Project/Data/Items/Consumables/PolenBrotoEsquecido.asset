@@ -17,6 +17,12 @@ MonoBehaviour:
     sufocada precocemente pelas ra\xEDzes invasoras da Espat\xF3dea. Embora pequeno,
     este p\xF3len carrega o peso de um ciclo interrompido. Consuma para absorver
     120 almas."
-  icon: {fileID: -2460741666225687260, guid: 8af48ac807496f348af63b0ac23a2ae9, type: 3}
-  isConsumable: 1
+  icon: {fileID: 8931118431954817205, guid: 92bb9c2766a3f21478a1ee29aee1c48b, type: 3}
   soulValue: 120
+  isConsumable: 1
+  canBeSold: 0
+  isInventoryExpansion: 0
+  slotsToGain: 6
+  isSpeedBoost: 0
+  speedMultiplier: 1.5
+  buffDuration: 5
