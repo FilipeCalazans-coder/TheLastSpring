@@ -39,6 +39,17 @@ public class PlayerStamina : MonoBehaviour
         UpdateUI();
     }
 
+    // Novo método para o BonfireManager chamar
+    public void ResetStamina()
+    {
+        _currentStamina = _maxStamina;
+        UpdateUI();
+        
+        // Opcional: Para o caso de ter uma corrotina de regeneração rodando, 
+        // paramos para evitar conflitos de UI ou cálculos estranhos
+        if (_regenCoroutine != null) StopCoroutine(_regenCoroutine);
+    }
+
     // Método principal para outras ações chamarem (Dash, Ataque)
     public bool TrySpendStamina(float amount)
     {

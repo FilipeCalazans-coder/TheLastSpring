@@ -71,24 +71,24 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-   private void Die()
+    private void Die()
     {
-        GetComponent<PlayerProgression>().SaveProgression(); // SALVA PRIMEIRO
-        // 1. Drop das almas
+        // 1. Drop das almas (Pólen) no local da morte
         GetComponent<PlayerProgression>().DropSoulsOnDeath();
 
-        // 2. Transição visual
-        if (SceneFader.Instance != null)
+        // 2. Não carregamos a cena novamente. 
+        // Em vez disso, pedimos ao Manager da Fogueira para nos levar ao último Checkpoint.
+        if (BonfireManager.Instance != null)
         {
-            SceneFader.Instance.FadeAndLoadScene("Test");
+            BonfireManager.Instance.RespawnPlayerAtLastBonfire();
         }
-
-        // 3. Reset de Status para o Respawn
-        _currentHealth = GetMaxHealth(); // Restaura a vida
-        UpdateUI();
-        
-        // 4. Teleporte (Opcional: crie um objeto "SpawnPoint" na cena)
-        transform.position = new Vector3(0, 0, 0); // Posição inicial do mapa
+        else
+        {
+            // Fallback de segurança se o Manager não existir
+            transform.position = Vector3.zero; 
+            _currentHealth = GetMaxHealth();
+            UpdateUI();
+        }
     }
 
     public void SetHealthBar(Slider bar)

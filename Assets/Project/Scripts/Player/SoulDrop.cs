@@ -1,36 +1,70 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SoulDrop : MonoBehaviour
 {
-    private int _soulsStored;
+    [SerializeField] private GameObject interactPrompt; // A UI "Pressione E para recuperar"
+    private int _storedPolen;
+    private bool _isPlayerInRange = false;
+    private PlayerControls _playerControls;
 
+    private void Awake()
+    {
+        _playerControls = new PlayerControls();
+        if (interactPrompt != null) interactPrompt.SetActive(false);
+    }
+
+    private void OnEnable()
+    {
+        _playerControls.Menu.Interact.performed += OnInteractPressed;
+        _playerControls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        _playerControls.Menu.Interact.performed -= OnInteractPressed;
+        _playerControls.Disable();
+    }
+
+    // Este método é chamado pelo PlayerProgression.cs ao morrer
     public void Initialize(int amount)
     {
-        _soulsStored = amount;
-        // Se a Fiorella morrer de novo, o script PlayerProgression já destrói a poça antiga
-        // então o DontDestroyOnLoad é seguro aqui para manter a poça entre recarregamentos de cena
-        DontDestroyOnLoad(gameObject); 
+        _storedPolen = amount;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log($"Colisão detectada com: {other.name} (Tag: {other.tag})"); // ADICIONE ISSO
         if (other.CompareTag("Player"))
         {
-            PlayerProgression progression = other.GetComponent<PlayerProgression>();
-            if (progression != null)
-            {
-                // 1. Devolve as almas para a variável local do player
-                progression.AddSouls(_soulsStored);
-                
-                // 2. FUNDAMENTAL: Avisa ao GameData que agora o player é dono dessas almas
-                GameData.CurrentSouls = progression.GetCurrentSouls();
-                
-                // 3. Salva o progresso para garantir que a coleta foi registrada
-                progression.SaveProgression();
+            Debug.Log("Fiorella entrou na área da Alma."); // ADICIONE ISSO
+            _isPlayerInRange = true;
+            if (interactPrompt != null) interactPrompt.SetActive(true);
+        }
+    }
 
-                Debug.Log($"<color=cyan>Almas recuperadas: {_soulsStored}. Total agora: {GameData.CurrentSouls}</color>");
-                
-                Destroy(gameObject); 
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            _isPlayerInRange = false;
+            if (interactPrompt != null) interactPrompt.SetActive(false);
+        }
+    }
+
+    private void OnInteractPressed(InputAction.CallbackContext context)
+    {
+        if (!_isPlayerInRange) return;
+
+        // Recupera o pólen e destrói o objeto
+        if (PlayerController.Instance != null)
+        {
+            PlayerProgression prog = PlayerController.Instance.GetComponent<PlayerProgression>();
+            if (prog != null)
+            {
+                prog.AddSouls(_storedPolen);
+                Debug.Log($"<color=green>Você recuperou {_storedPolen} de Pólen!</color>");
+                Destroy(gameObject); // Remove a alma do chão
             }
         }
     }

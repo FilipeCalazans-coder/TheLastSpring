@@ -73,6 +73,12 @@ public class PlayerProgression : MonoBehaviour
         SaveProgression();
     }
 
+    public void ReEnablePlayerCollider()
+    {
+        Collider2D playerCollider = GetComponent<Collider2D>();
+        if (playerCollider != null) playerCollider.enabled = true;
+    }
+
     public void SaveProgression()
     {
         GameData.PlayerLevel = characterLevel;

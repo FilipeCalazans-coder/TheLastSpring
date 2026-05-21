@@ -2,110 +2,85 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class LevelUpUI : MonoBehaviour
+namespace Project.Scripts.Hud
 {
-    [Header("Referências de Texto")]
-    [SerializeField] private TextMeshProUGUI pointsText;
-    [SerializeField] private TextMeshProUGUI atkText, defText, vitText, resText;
-    [SerializeField] private TextMeshProUGUI characterLevelText;
-
-    [Header("Painel Visual")]
-    [SerializeField] private GameObject visualPanel; // O painel cinza
-
-    [Header("Status Types")]
-    [SerializeField] private StatType atkType;
-    [SerializeField] private StatType defType;
-    [SerializeField] private StatType vitType;
-    [SerializeField] private StatType resType;
-
-    private PlayerProgression _progression;
-    private BaseStats _stats;
-    private bool _isOpen = false;
-    private PlayerControls _playerControls;
-
-    private void Awake()
+    public class LevelUpUI : MonoBehaviour
     {
-        _playerControls = new PlayerControls();
-    }
+        [Header("Referências de Texto")]
+        [SerializeField] private TextMeshProUGUI pointsText;
+        [SerializeField] private TextMeshProUGUI atkText, defText, vitText, resText;
+        [SerializeField] private TextMeshProUGUI characterLevelText;
 
-    private void OnEnable()
-    {
-        _playerControls.Enable();
-        _playerControls.Menu.Enable(); // Garante que a tecla de abrir/fechar sempre funcione
-    }
-    
-    private void Start()
-    {
-        if (PlayerController.Instance != null)
+        [Header("Status Types")]
+        [SerializeField] private StatType atkType;
+        [SerializeField] private StatType defType;
+        [SerializeField] private StatType vitType;
+        [SerializeField] private StatType resType;
+
+        private PlayerProgression _progression;
+        private BaseStats _stats;
+
+        private void Awake()
         {
-            _progression = PlayerController.Instance.GetComponent<PlayerProgression>();
-            _stats = PlayerController.Instance.GetComponent<BaseStats>();
+            FetchReferences();
         }
 
-        _playerControls.Menu.ToggleMenu.performed += _ => ToggleWindow();
-        
-        visualPanel.SetActive(false);
-        _isOpen = false;
-    }
-
-    private void OnDisable()
-    {
-        _playerControls.Disable();
-    }
-
-    public void ToggleWindow()
-    {
-        _isOpen = !_isOpen;
-        
-        
-        visualPanel.SetActive(_isOpen);
-        
-        if (_isOpen) 
+        private void OnEnable()
         {
+            // Força a busca das referências antes de atualizar os textos
+            FetchReferences();
             RefreshUI();
-            _playerControls.Combat.Disable(); 
-            _playerControls.Movement.Disable();
         }
-        else 
+
+        // Método de busca proativa para evitar o conflito do ciclo de vida da Unity
+        private void FetchReferences()
         {
-            _playerControls.Combat.Enable();
-            _playerControls.Movement.Enable();
+            if (_progression == null || _stats == null)
+            {
+                if (PlayerController.Instance != null)
+                {
+                    _progression = PlayerController.Instance.GetComponent<PlayerProgression>();
+                    _stats = PlayerController.Instance.GetComponent<BaseStats>();
+                }
+            }
         }
-    }
 
-    public void RefreshUI()
-    {
-        if (_progression == null || _stats == null) return;
+        public void RefreshUI()
+        {
+            // Dupla checagem segura para garantir que os dados estão prontos
+            FetchReferences();
+            if (_progression == null || _stats == null) return;
 
-        int currentSouls = _progression.GetCurrentSouls();
-        int required = _progression.GetRequiredSoulsForNextLevel();
+            int currentPolen = _progression.GetCurrentSouls(); 
+            int required = _progression.GetRequiredSoulsForNextLevel();
 
-        pointsText.text = $"Almas: {currentSouls} / Necessário: {required}";
+            pointsText.text = $"Pólen: {currentPolen} / Necessário: {required}";
+            characterLevelText.text = "Nível: " + _progression.GetCurrentLevel();
+
+            pointsText.color = currentPolen >= required ? Color.white : Color.red;
+
+            atkText.text = "Ataque: " + _stats.GetStatValue(atkType);
+            defText.text = "Defesa: " + _stats.GetStatValue(defType);
+            vitText.text = "Vitalidade: " + _stats.GetStatValue(vitType);
+            resText.text = "Resistência: " + _stats.GetStatValue(resType);
+        }
+
+        // --- MÉTODOS DOS BOTÕES DE UPGRADE ---
+        public void UpgradeAtk() { _progression.AllocatePoint(atkType); RefreshUI(); }
+        public void UpgradeDef() { _progression.AllocatePoint(defType); RefreshUI(); }
         
-        // ATUALIZAÇÃO: Mostra o nível atual na janela de atributos
-        characterLevelText.text = "Nível: " + _progression.GetCurrentLevel();
-
-        pointsText.color = currentSouls >= required ? Color.white : Color.red;
-
-        atkText.text = "Ataque: " + _stats.GetStatValue(atkType);
-        defText.text = "Defesa: " + _stats.GetStatValue(defType) + "%";
-        vitText.text = "Vitalidade: " + _stats.GetStatValue(vitType);
-        resText.text = "Resistência: " + _stats.GetStatValue(resType);
-    }
-
-    // Métodos dos Botões
-    public void UpgradeAtk() { _progression.AllocatePoint(atkType); RefreshUI(); }
-    public void UpgradeDef() { _progression.AllocatePoint(defType); RefreshUI(); }
-    public void UpgradeVit() 
-    { 
-        _progression.AllocatePoint(vitType); 
-        PlayerController.Instance.GetComponent<PlayerHealth>().UpdateMaxHealth(); 
-        RefreshUI(); 
-    }
-    public void UpgradeRes() 
-    { 
-        _progression.AllocatePoint(resType); 
-        PlayerController.Instance.GetComponent<PlayerStamina>().UpdateMaxStamina(); 
-        RefreshUI(); 
+        public void UpgradeVit() 
+        { 
+            _progression.AllocatePoint(vitType); 
+            PlayerController.Instance.GetComponent<PlayerHealth>()?.UpdateMaxHealth(); 
+            RefreshUI(); 
+        }
+        
+        public void UpgradeRes() 
+        { 
+            _progression.AllocatePoint(resType); 
+            PlayerController.Instance.GetComponent<PlayerStamina>()?.UpdateMaxStamina(); 
+            RefreshUI(); 
+        }
     }
 }

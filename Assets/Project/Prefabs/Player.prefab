@@ -450,8 +450,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d11c33b75271ff2499cda5aed881bb69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  moveSpeed: 3
-  dashSpeed: 5
+  baseMoveSpeed: 1
+  dashSpeedMultiplier: 4
   myTrailRenderer: {fileID: 6928911234247312771}
 --- !u!50 &1383795767703619756
 Rigidbody2D:
@@ -580,7 +580,7 @@ MonoBehaviour:
   baseLevelCost: 100
   costMultiplier: 1.2
   currentSouls: 0
-  soulDropPrefab: {fileID: 6229344182318727302, guid: 565ea6a2e19849848b65d5304834e58d, type: 3}
+  soulDropPrefab: {fileID: 406927458077516745, guid: dc11f2ec2a9b6e442a715ea0382aea6a, type: 3}
 --- !u!114 &-5414621525420059557
 MonoBehaviour:
   m_ObjectHideFlags: 0
