@@ -15,8 +15,8 @@ MonoBehaviour:
   itemName: "P\xF3len de um Broto Esquecido"
   description: "O vest\xEDgio vital de uma muda que nunca conheceu o calor do sol,
     sufocada precocemente pelas ra\xEDzes invasoras da Espat\xF3dea. Embora pequeno,
-    este p\xF3len carrega o peso de um ciclo interrompido. Consuma para absorver
-    120 almas."
+    este p\xF3len carrega o peso de um ciclo interrompido. \n\nConsuma para absorver
+    120 P\xF3len."
   icon: {fileID: 8931118431954817205, guid: 92bb9c2766a3f21478a1ee29aee1c48b, type: 3}
   soulValue: 120
   isConsumable: 1

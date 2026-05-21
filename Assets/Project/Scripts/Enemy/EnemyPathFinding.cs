@@ -1,10 +1,9 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
 public class EnemyPathFinding : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 2f;
+    [Header("Movimento")]
+    public float moveSpeed = 3f; // Agora é totalmente público e atualiza em tempo real!
 
     private Rigidbody2D rb;
     private Vector2 moveDir;
@@ -18,12 +17,22 @@ public class EnemyPathFinding : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (knockBack.GettingKnockedBack) { return;}
-        rb.MovePosition(rb.position + moveDir * (moveSpeed * Time.fixedDeltaTime));
+        // Se estiver a sofrer knockback, o motor desliga as pernas
+        if (knockBack != null && knockBack.GettingKnockedBack) return;
+
+        // O motor aplica a velocidade atualizada
+        rb.linearVelocity = moveDir * moveSpeed;
     }
 
     public void MoveTo(Vector2 targetPosition)
     {
-        moveDir = targetPosition;
+        // O cast para (Vector2) garante que ignoramos o maldito Eixo Z!
+        moveDir = (targetPosition - (Vector2)transform.position).normalized;
+    }
+
+    public void StopMoving()
+    {
+        moveDir = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
     }
 }

@@ -6,12 +6,12 @@ namespace Project.Scripts.Inventory
     public class InventoryManager : MonoBehaviour
     {
         [Header("Configurações de Capacidade")]
-        public int currentMaxSlots = 12; 
+        public int currentMaxSlots = 12; // Quantos ela pode usar agora
+        public int absoluteMaxSlots = 36; // Quantos o grid vai mostrar (com cadeados)
 
         [Header("Mochila da Fiorella")]
         public List<ItemData> items = new List<ItemData>();
 
-        // Adiciona um item se houver espaço
         public void AddItem(ItemData newItem)
         {
             if (items.Count < currentMaxSlots)
@@ -21,16 +21,21 @@ namespace Project.Scripts.Inventory
             }
             else
             {
-                Debug.Log("<color=red>Mochila cheia! Não há espaço.</color>");
+                Debug.Log("<color=red>Mochila cheia! Você precisa de mais espaço.</color>");
             }
         }
 
-        // Expande os slots do inventário
         public void ExpandInventory(ItemData expansionItem)
         {
+            // Aumenta o limite, mas não deixa passar do limite absoluto
             currentMaxSlots += expansionItem.slotsToGain;
+            if (currentMaxSlots > absoluteMaxSlots) currentMaxSlots = absoluteMaxSlots;
+
             items.Remove(expansionItem); 
-            Object.FindFirstObjectByType<InventoryUI>()?.RefreshSlotCount();
+            Debug.Log($"<color=cyan>Mochila expandida! Novo limite: {currentMaxSlots}/{absoluteMaxSlots} slots.</color>");
+            
+            // Apenas atualiza a UI (tira os cadeados), não precisa recriar os slots!
+            Object.FindFirstObjectByType<InventoryUI>()?.UpdateUI();
         }
 
         // Vende ou consome almas
@@ -64,6 +69,19 @@ namespace Project.Scripts.Inventory
                     player.ApplySpeedBuff(boostItem.speedMultiplier, boostItem.buffDuration);
                     Debug.Log($"<color=cyan>Usou {boostItem.itemName}! Velocidade aumentada.</color>");
                 }
+            }
+        }
+
+        // Método que consome um item genérico e atualiza a UI
+        public void ConsumeGenericItem(ItemData itemToConsume)
+        {
+            if (items.Contains(itemToConsume))
+            {
+                items.Remove(itemToConsume);
+                Object.FindFirstObjectByType<InventoryUI>()?.UpdateUI();
+                
+                Debug.Log($"<color=cyan>Fiorella usou: {itemToConsume.itemName}!</color>");
+                // Dica: Aqui será o lugar perfeito para chamar player.Heal() quando criarmos a cura!
             }
         }
     }

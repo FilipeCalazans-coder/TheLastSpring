@@ -15,8 +15,14 @@ MonoBehaviour:
   itemName: "P\xF3len de um Guardi\xE3o do Jardim"
   description: "P\xF3len denso e pesado, extra\xEDdo das sentinelas que outrora protegiam
     os limites do Jardim Primordial. Estes guardi\xF5es permaneceram em seus postos
-    muito depois do sol se apagar, vinculados a um dever que o mundo esqueceu. Concede
-    1.000 almas."
+    muito depois do sol se apagar, vinculados a um dever que o mundo esqueceu. \n\nConcede
+    1.000 P\xF3len."
   icon: {fileID: -2460741666225687260, guid: 8af48ac807496f348af63b0ac23a2ae9, type: 3}
-  isConsumable: 1
   soulValue: 1000
+  isConsumable: 1
+  canBeSold: 0
+  isInventoryExpansion: 0
+  slotsToGain: 6
+  isSpeedBoost: 0
+  speedMultiplier: 1.5
+  buffDuration: 5

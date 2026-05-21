@@ -9,13 +9,32 @@ namespace Project.Scripts.Inventory
         public List<ItemData> itemsForSale = new List<ItemData>();
         
         [Header("Configurações de UI")]
-        public GameObject merchantMainPanel; // Painel "Comprar / Vender"
-        public GameObject buyPanel;         // Painel da Lista de Compra
-        public Transform buyListParent;      // Onde as linhas serão criadas (Content)
-        public GameObject buySlotPrefab;     // O Prefab da linha (Ícone + Preço + Desc)
+        public GameObject merchantMainPanel; 
+        public GameObject buyPanel;         
+        public Transform buyListParent;      
+        public GameObject buySlotPrefab;     
 
         private bool _isPlayerNear = false;
         private InventoryUI _playerUI;
+        
+        // NOVA VARIÁVEL DO INPUT SYSTEM
+        private PlayerControls _playerControls;
+
+        private void Awake()
+        {
+            // Inicializamos o sistema de controles
+            _playerControls = new PlayerControls();
+        }
+
+        private void OnEnable()
+        {
+            _playerControls.Enable();
+        }
+
+        private void OnDisable()
+        {
+            _playerControls.Disable();
+        }
 
         private void Start()
         {
@@ -26,24 +45,24 @@ namespace Project.Scripts.Inventory
 
         private void Update()
         {
-            // Abre o menu ao apertar E perto do NPC
-            if (_isPlayerNear && Input.GetKeyDown(KeyCode.E))
+            // VERIFICAÇÃO COM O NOVO INPUT SYSTEM
+            if (_isPlayerNear && _playerControls.Menu.Interact.triggered)
             {
-                OpenMerchantMenu();
+                if (!merchantMainPanel.activeSelf)
+                {
+                    OpenMerchantMenu();
+                }
             }
         }
 
         // --- Lógica de Compra ---
-
         public void ProcessPurchase(ItemData item)
         {
             PlayerProgression player = Object.FindFirstObjectByType<PlayerProgression>();
             InventoryManager inv = Object.FindFirstObjectByType<InventoryManager>();
 
-            // 1. Verifica se tem dinheiro e gasta
             if (player != null && player.SpendSouls(item.soulValue))
             {
-                // 2. Adiciona o item ao inventário
                 inv?.AddItem(item);
                 Debug.Log($"<color=green>Compra realizada: {item.itemName}!</color>");
             }
@@ -54,7 +73,6 @@ namespace Project.Scripts.Inventory
         }
 
         // --- Funções de Menu ---
-
         public void SelectBuyOption()
         {
             merchantMainPanel.SetActive(false);
@@ -62,13 +80,10 @@ namespace Project.Scripts.Inventory
             PopulateBuyList();
         }
 
-        // Cria a lista visual de itens baseada na lista itemsForSale
         private void PopulateBuyList()
         {
-            // Limpa a lista antiga para não duplicar
             foreach (Transform child in buyListParent) Destroy(child.gameObject);
 
-            // Cria uma nova linha para cada item que o mercador vende
             foreach (ItemData item in itemsForSale)
             {
                 GameObject newSlot = Instantiate(buySlotPrefab, buyListParent);

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 043b33ad15a714840abc7d19473869f5, type: 3}
+  m_Name: Intro_Anciao
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Dialogue.DialogueData
+  npcName: Teste
+  npcLines:
+  - "Essa \xE9 uma fala teste para ver se est\xE1 funcionando"
+  - "Isso aqui tamb\xE9m"
+  options:
+  - playerChoiceText: Pode clicar
+    nextDialogue: {fileID: 11400000, guid: e9c8e5e40dd780c458f36930fe11f640, type: 2}

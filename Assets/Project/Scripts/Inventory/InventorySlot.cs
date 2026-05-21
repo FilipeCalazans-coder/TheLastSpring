@@ -5,9 +5,13 @@ namespace Project.Scripts.Inventory
 {
     public class InventorySlot : MonoBehaviour
     {
-        public Image icon;
+        [Header("Referências Visuais")]
+        public Image icon; // Ícone do item
+        public Image lockIcon; // NOVO: Ícone do cadeado
+
         private ItemData _currentItem;
         private InventoryManager _inventory;
+        private bool _isLocked = false; // Estado do slot
 
         public static bool IsAtMerchant = false; 
 
@@ -16,11 +20,34 @@ namespace Project.Scripts.Inventory
             _inventory = Object.FindFirstObjectByType<InventoryManager>();
         }
 
-        public void AddItem(ItemData newItem)
+        // NOVO MÉTOD: Configura o estado visual completo do slot
+        public void SetupSlot(bool locked, ItemData item)
         {
-            _currentItem = newItem;
-            icon.sprite = newItem.icon;
-            icon.enabled = true;
+            _isLocked = locked;
+            
+            // Ativa o cadeado se estiver bloqueado, desativa se estiver livre
+            if (lockIcon != null) lockIcon.gameObject.SetActive(locked);
+
+            if (locked)
+            {
+                // Se está trancado, esconde qualquer item
+                _currentItem = null;
+                icon.enabled = false;
+            }
+            else
+            {
+                // Se está livre, verifica se tem item para mostrar
+                if (item != null)
+                {
+                    _currentItem = item;
+                    icon.sprite = item.icon;
+                    icon.enabled = true;
+                }
+                else
+                {
+                    ClearSlot();
+                }
+            }
         }
 
         public void ClearSlot()
@@ -32,28 +59,19 @@ namespace Project.Scripts.Inventory
 
         public void OnSlotClicked()
         {
-            if (_currentItem == null || _inventory == null) return;
+            // Se o slot estiver trancado ou vazio, ignora o clique
+            if (_isLocked || _currentItem == null) return;
 
-            // 1. Lógica se o item for Consumível (Pode usar a qualquer momento)
-            if (_currentItem.isConsumable)
+            // Encontra o Painel de Detalhes na cena e manda os dados do item
+            InventoryDetailsPanel detailsPanel = Object.FindFirstObjectByType<InventoryDetailsPanel>();
+            
+            if (detailsPanel != null)
             {
-                if (_currentItem.isInventoryExpansion)
-                {
-                    _inventory.ExpandInventory(_currentItem);
-                }
-                else if (_currentItem.isSpeedBoost) // NOVA REGRA DE VELOCIDADE
-                {
-                    _inventory.UseSpeedBoost(_currentItem);
-                }
-                else
-                {
-                    _inventory.SellItem(_currentItem); // Ex: Grão de Pólen
-                }
+                detailsPanel.UpdatePanel(_currentItem);
             }
-            // 2. Lógica se o item for apenas Vendável (Requer Mercador)
-            else if (_currentItem.canBeSold && IsAtMerchant)
+            else
             {
-                _inventory.SellItem(_currentItem);
+                Debug.LogWarning("Painel de Detalhes não encontrado na cena!");
             }
         }
     }

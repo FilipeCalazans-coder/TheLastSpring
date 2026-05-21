@@ -8,60 +8,102 @@ namespace Project.Scripts.Inventory
     {
         [Header("Referências da Interface")]
         public GameObject inventoryPanel; 
-        public Transform itemsGrid;      // O objeto com o Grid Layout Group
-        public GameObject slotPrefab;    // Arraste o Prefab do seu InventorySlot aqui
+        public GameObject backgroundOverlay; 
+        
+        public Transform itemsGrid; 
+        public GameObject slotPrefab;     
+        
+        [Tooltip("Crie um Prefab vazio (apenas um RectTransform com o tamanho do slot) e arraste para aqui.")]
+        public GameObject dummySlotPrefab; // A SOLUÇÃO DEFINITIVA
+        
         public InventoryManager inventory; 
+
+        [Header("Truque de Layout do Artista")]
+        public bool useDummySlot = true; 
 
         private List<InventorySlot> _slots = new List<InventorySlot>();
         public bool isOpen = false; 
 
-        void Start()
+        private PlayerControls _playerControls;
+
+        private void Awake()
         {
-            inventoryPanel.SetActive(false);
-            RefreshSlotCount(); // Cria os 12 iniciais
+            _playerControls = new PlayerControls();
         }
 
-        // Cria ou remove slots visuais baseados no currentMaxSlots do Manager
-        public void RefreshSlotCount()
+        private void OnEnable() => _playerControls.Enable();
+        private void OnDisable() => _playerControls.Disable();
+
+        void Start()
         {
-            // 1. Limpa os slots antigos da lista e da tela
+            if (inventoryPanel != null) inventoryPanel.SetActive(false);
+            if (backgroundOverlay != null) backgroundOverlay.SetActive(false);
+            
+            GenerateAllSlots(); 
+        }
+
+        private void Update()
+        {
+            if (_playerControls.Menu.ToggleInventory.triggered)
+            {
+                ForceToggleInventory();
+            }
+        }
+
+        private void GenerateAllSlots()
+        {
+            if (itemsGrid == null || slotPrefab == null || inventory == null) return;
+
+            // Limpa tudo o que estiver na grelha
             foreach (Transform child in itemsGrid) Destroy(child.gameObject);
             _slots.Clear();
 
-            // 2. Cria a quantidade exata de slots que o player tem direito
-            for (int i = 0; i < inventory.currentMaxSlots; i++)
+            // 1. Instancia o DUMMY PREFAB (que tem o tamanho correto para o Grid Layout ler)
+            if (useDummySlot && dummySlotPrefab != null)
             {
-                GameObject newSlot = Instantiate(slotPrefab, itemsGrid);
-                _slots.Add(newSlot.GetComponent<InventorySlot>());
+                Instantiate(dummySlotPrefab, itemsGrid, false);
+            }
+            else if (useDummySlot && dummySlotPrefab == null)
+            {
+                Debug.LogWarning("O useDummySlot está ativado, mas faltou colocar o Dummy Slot Prefab no Inspector!");
+            }
+
+            // 2. Gera os slots reais (ex: 36)
+            int maxAbsolute = inventory.absoluteMaxSlots <= 0 ? 36 : inventory.absoluteMaxSlots;
+            
+            for (int i = 0; i < maxAbsolute; i++)
+            {
+                GameObject newSlot = Instantiate(slotPrefab, itemsGrid, false);
+                InventorySlot slotScript = newSlot.GetComponent<InventorySlot>();
+                if (slotScript != null)
+                {
+                    _slots.Add(slotScript);
+                }
             }
             
-            UpdateUI(); // Preenche com os itens que ela já tinha
-        }
-
-        public void OnToggleInventory(InputValue value)
-        {
-            if (value.isPressed) ForceToggleInventory();
+            UpdateUI();
         }
 
         public void ForceToggleInventory()
         {
+            if (inventoryPanel == null) return;
+
             isOpen = !isOpen;
             inventoryPanel.SetActive(isOpen);
+            if (backgroundOverlay != null) backgroundOverlay.SetActive(isOpen);
+
             if (isOpen) UpdateUI();
         }
 
         public void UpdateUI()
         {
+            if (inventory == null || _slots.Count == 0) return;
+
             for (int i = 0; i < _slots.Count; i++)
             {
-                if (i < inventory.items.Count)
-                {
-                    _slots[i].AddItem(inventory.items[i]);
-                }
-                else
-                {
-                    _slots[i].ClearSlot();
-                }
+                bool isLocked = i >= inventory.currentMaxSlots;
+                ItemData item = (!isLocked && i < inventory.items.Count) ? inventory.items[i] : null;
+                _slots[i].SetupSlot(isLocked, item);
             }
         }
     }

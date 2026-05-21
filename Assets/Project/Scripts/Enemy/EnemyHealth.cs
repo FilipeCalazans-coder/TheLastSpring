@@ -11,7 +11,7 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] private StatType defenseStatType;
 
     [Header("Recompensa")]
-    [SerializeField] private int soulsDropped = 50; // <--- ADICIONE ESTA LINHA
+    [SerializeField] private int polenDropped = 50; // <--- ADICIONE ESTA LINHA
 
     private EnemyHealthBar _healthBar;
     private int currentHealth;
@@ -84,7 +84,7 @@ public class EnemyHealth : MonoBehaviour
                 PlayerProgression playerXP = PlayerController.Instance.GetComponent<PlayerProgression>();
                 if (playerXP != null)
                 {
-                    playerXP.AddSouls(soulsDropped);
+                    playerXP.AddSouls(polenDropped);
                 }
             }
 

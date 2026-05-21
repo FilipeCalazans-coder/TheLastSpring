@@ -16,7 +16,7 @@ MonoBehaviour:
   description: "Um aglomerado vibrante de p\xF3len que brilha com uma determina\xE7\xE3o
     incomum. Pertenceu a uma flor que se recusou a murchar mesmo quando as sombras
     da Espat\xF3dea tocaram suas p\xE9talas. Consumir esta ess\xEAncia \xE9 herdar
-    um fragmento de sua resili\xEAncia. Concede 400 almas."
+    um fragmento de sua resili\xEAncia. \n\nConcede 400 P\xF3len."
   icon: {fileID: -5822428726612025589, guid: 95c9c0dad6c626443b745bd0e6612522, type: 3}
   soulValue: 400
   isConsumable: 1

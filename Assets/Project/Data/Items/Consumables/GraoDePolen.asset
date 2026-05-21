@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: "Gr\xE3o de P\xF3len"
   description: "Um gr\xE3o dourado que ainda carrega a lembran\xE7a da primavera.
     Apesar de fr\xE1gil e diminuto, cont\xE9m a energia vital necess\xE1ria para
-    fortalecer as ra\xEDzes de Fiorella. Esmague-o para absorver 50 almas."
+    fortalecer as ra\xEDzes de Fiorella. \n\nEsmague-o para absorver 50 P\xF3len."
   icon: {fileID: -4540022725524668120, guid: aaf3233d50f724948bcd8b006bc8d665, type: 3}
   soulValue: 50
   isConsumable: 1

@@ -3,9 +3,7 @@ using UnityEngine;
 
 public class KnockBack : MonoBehaviour
 {
-    public bool GettingKnockedBack { get; private set; }
-
-    [SerializeField] private float knockBackTime = .2f;
+    public bool GettingKnockedBack { get; private set; } // Variável pública apenas de leitura
 
     private Rigidbody2D rb;
 
@@ -16,21 +14,29 @@ public class KnockBack : MonoBehaviour
 
     public void GetKnockedBack(Transform damageSource, float knockBackThrust)
     {
-        EnemyIA enemyIA = GetComponent<EnemyIA>();
-        if (enemyIA != null)
-        {
-            enemyIA.StopMoving(0.2f); // Para a IA por 0.2 segundos (tempo do pulo para trás)
-        }
         GettingKnockedBack = true;
-        Vector2 difference = (transform.position - damageSource.position).normalized * knockBackThrust * rb.mass;
-        rb.AddForce(difference, ForceMode2D.Impulse);
+
+        // Calcula a direção do empurrão
+        Vector2 difference = (transform.position - damageSource.position).normalized;
+        Vector2 force = difference * knockBackThrust;
+
+        // Limpa a velocidade atual e aplica a força do impacto
+        rb.linearVelocity = Vector2.zero;
+        rb.AddForce(force, ForceMode2D.Impulse);
+
+        // Inicia a rotina para recuperar o controlo após o empurrão
         StartCoroutine(KnockRoutine());
     }
 
     private IEnumerator KnockRoutine()
     {
-        yield return new WaitForSeconds(knockBackTime);
-        rb.linearVelocity = Vector2.zero;
+        // O tempo que o inimigo fica "tonto" e escorregando
+        yield return new WaitForSeconds(0.2f); 
+        
+        // Trava o corpo para ele não continuar a deslizar como no gelo
+        rb.linearVelocity = Vector2.zero; 
+        
+        // Devolve o controlo ao EnemyPathFinding
         GettingKnockedBack = false;
     }
 }
