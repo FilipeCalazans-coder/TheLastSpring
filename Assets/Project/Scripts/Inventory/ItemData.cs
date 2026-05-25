@@ -25,5 +25,9 @@ namespace Project.Scripts.Inventory
         public bool isSpeedBoost;
         public float speedMultiplier = 1.5f; // Multiplica a velocidade (ex: 1.5 = 50% mais rápido)
         public float buffDuration = 5f;      // Tempo em segundos que o efeito dura
+
+        [Header("Efeito de Pólen (Almas)")]
+        [Tooltip("Se marcado, este item aumentará o número de almas que o jogador possui.")]
+        public bool isPollenItem; // Marque isso nos itens de alma no Inspector
     }
 }

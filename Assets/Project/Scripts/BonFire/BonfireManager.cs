@@ -1,10 +1,13 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Project.Scripts.Inventory;
 
 public class BonfireManager : MonoBehaviour
 {
     public static BonfireManager Instance { get; private set; }
+
+    public ChestInventory bonfireChest;
 
     [Header("Gerenciamento de Respawn")]
     [SerializeField] private Transform defaultSpawnPoint;

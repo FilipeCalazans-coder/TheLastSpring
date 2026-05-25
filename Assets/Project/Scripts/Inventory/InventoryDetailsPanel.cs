@@ -25,7 +25,7 @@ namespace Project.Scripts.Inventory
             ClearPanel(); 
         }
 
-        public void UpdatePanel(ItemData item)
+        public void UpdatePanel(ItemData item, bool isFromChest = false)
         {
             if (item == null)
             {
@@ -51,31 +51,47 @@ namespace Project.Scripts.Inventory
                 itemValueText.gameObject.SetActive(false);
             }
 
-            ConfigureActionButton();
+            ConfigureActionButton(isFromChest);
         }
 
-        private void ConfigureActionButton()
+        private void ConfigureActionButton(bool isFromChest)
         {
-            // Limpa funções antigas para o botão não clicar duas vezes
             actionButton.onClick.RemoveAllListeners();
 
-            if (InventorySlot.IsAtMerchant && _currentItem.canBeSold)
+            if (isFromChest)
             {
+                // Botão para o Baú
+                actionButtonText.text = "RETIRAR";
+                actionButton.onClick.AddListener(OnWithdrawClicked);
+            }
+            else if (InventorySlot.IsAtMerchant && _currentItem.canBeSold)
+            {
+                // Botão para o Mercador
                 actionButtonText.text = "VENDER";
                 actionButton.onClick.AddListener(OnSellClicked);
-                actionButton.interactable = true;
             }
             else if (_currentItem.isConsumable)
             {
+                // Botão para a Mochila
                 actionButtonText.text = "USAR";
                 actionButton.onClick.AddListener(OnUseClicked);
-                actionButton.interactable = true;
             }
             else
             {
                 actionButtonText.text = "EXAMINAR";
                 actionButton.interactable = false;
             }
+        }
+
+        private void OnWithdrawClicked()
+        {
+            ChestInventory chest = Object.FindFirstObjectByType<ChestInventory>();
+            _inventoryManager.MoveFromChest(_currentItem, chest);
+            ClearPanel();
+            
+            // Importante: Se o baú estiver aberto, precisamos atualizar a UI dele
+            ChestUI chestUI = Object.FindFirstObjectByType<ChestUI>();
+            if (chestUI != null) chestUI.UpdateChestUI();
         }
 
         private void OnUseClicked()

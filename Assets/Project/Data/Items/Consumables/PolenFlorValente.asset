@@ -26,3 +26,4 @@ MonoBehaviour:
   isSpeedBoost: 0
   speedMultiplier: 1.5
   buffDuration: 5
+  isPollenItem: 1
