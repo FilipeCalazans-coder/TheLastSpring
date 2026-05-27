@@ -18,6 +18,7 @@ namespace Project.Scripts.Inventory
 
         private ItemData _currentItem;
         private InventoryManager _inventoryManager;
+        private ChestInventory _activeChest;
 
         private void Start()
         {
@@ -57,12 +58,18 @@ namespace Project.Scripts.Inventory
         private void ConfigureActionButton(bool isFromChest)
         {
             actionButton.onClick.RemoveAllListeners();
+            actionButton.interactable = true; // Garante que esteja ativo
 
             if (isFromChest)
             {
                 // Botão para o Baú
                 actionButtonText.text = "RETIRAR";
                 actionButton.onClick.AddListener(OnWithdrawClicked);
+            }
+            else if (_activeChest != null) // NOVO: Se tem um baú aberto e não é item dele
+            {
+                actionButtonText.text = "DEPOSITAR";
+                actionButton.onClick.AddListener(OnDepositClicked);
             }
             else if (InventorySlot.IsAtMerchant && _currentItem.canBeSold)
             {
@@ -81,6 +88,21 @@ namespace Project.Scripts.Inventory
                 actionButtonText.text = "EXAMINAR";
                 actionButton.interactable = false;
             }
+        }
+
+        // Novo método para depositar
+        private void OnDepositClicked()
+        {
+            if (_currentItem == null || _activeChest == null) return;
+
+            // Em vez de chamar o baú direto, use o método do seu Manager
+            _inventoryManager.MoveToChest(_currentItem, _activeChest);
+            
+            // Atualiza a UI do baú
+            ChestUI chestUI = Object.FindFirstObjectByType<ChestUI>();
+            if (chestUI != null) chestUI.UpdateChestUI();
+            
+            ClearPanel();
         }
 
         private void OnWithdrawClicked()
@@ -128,6 +150,11 @@ namespace Project.Scripts.Inventory
         {
             _currentItem = null;
             panelRoot.SetActive(false);
+        }
+
+        public void SetActiveChest(ChestInventory chest)
+        {
+            _activeChest = chest;
         }
     }
 }

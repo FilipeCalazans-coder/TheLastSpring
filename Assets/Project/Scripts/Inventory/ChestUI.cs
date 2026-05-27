@@ -7,21 +7,37 @@ namespace Project.Scripts.Inventory
 {
     public class ChestUI : MonoBehaviour
     {
+        [Header("Referências")]
+        public GameObject chestPanel; // ARRASTE O PAINEL PRINCIPAL DO BAÚ AQUI
         public Transform itemsGrid; 
         public GameObject slotPrefab;
+        
+        // Esta variável será definida pelo BonfireTrigger quando abrirmos o baú
         public ChestInventory chestInventory;
 
         private List<InventorySlot> _slots = new List<InventorySlot>();
+
+        // Método que o BonfireTrigger chamará
+        public void Open(ChestInventory chest)
+        {
+            chestInventory = chest;
+            if (chestPanel != null) chestPanel.SetActive(true);
+            UpdateChestUI();
+        }
+
+        public void Close()
+        {
+            if (chestPanel != null) chestPanel.SetActive(false);
+            chestInventory = null;
+        }
 
         public void UpdateChestUI()
         {
             if (chestInventory == null || itemsGrid == null) return;
 
-            // Limpa tudo e prepara o grid
             foreach (Transform child in itemsGrid) Destroy(child.gameObject);
             _slots.Clear();
 
-            // Loop fixo baseado na capacidade máxima
             for (int i = 0; i < chestInventory.maxCapacity; i++)
             {
                 GameObject newSlot = Instantiate(slotPrefab, itemsGrid);
@@ -29,14 +45,12 @@ namespace Project.Scripts.Inventory
                 
                 if (slotScript != null)
                 {
-                    // Verifica se existe um item nessa posição da lista
                     ItemData item = (i < chestInventory.storedItems.Count) ? chestInventory.storedItems[i] : null;
                     
+                    slotScript.SetupSlot(false, item);
+
                     if (item != null)
                     {
-                        slotScript.SetupSlot(false, item); 
-
-                        // Adiciona UMA única vez o listener para abrir os detalhes
                         Button btn = newSlot.GetComponent<Button>();
                         if (btn != null)
                         {
@@ -44,17 +58,11 @@ namespace Project.Scripts.Inventory
                                 InventoryDetailsPanel panel = Object.FindFirstObjectByType<InventoryDetailsPanel>();
                                 if (panel != null)
                                 {
-                                    panel.UpdatePanel(item, true); // true = é do baú
+                                    panel.UpdatePanel(item, true); // true = é item do baú
                                 }
                             });
                         }
                     }
-                    else
-                    {
-                        // Slot vazio
-                        slotScript.SetupSlot(false, null);
-                    }
-                    
                     _slots.Add(slotScript);
                 }
             }

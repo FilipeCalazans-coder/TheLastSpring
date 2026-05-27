@@ -20,6 +20,6 @@ public class PlayerHUD : MonoBehaviour
     private void Update()
     {
         if (_progression == null) return;
-        soulsText.text = "Almas: " + _progression.GetCurrentSouls();
+        soulsText.text = "Pólen: " + _progression.GetCurrentSouls();
     }
 }
