@@ -11,13 +11,17 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] private StatType defenseStatType;
 
     [Header("Recompensa")]
-    [SerializeField] private int polenDropped = 50; // <--- ADICIONE ESTA LINHA
+    [SerializeField] private int polenDropped = 50; 
 
     private EnemyHealthBar _healthBar;
     private int currentHealth;
     private KnockBack knockBack;
     private Flash flash;
     private BaseStats _myStats; 
+
+    // ARQUITETURA DE RESPONDERS: Guarda dados de fábrica para o Respawn
+    private Vector3 _initialPosition;
+    private bool _hasDroppedSouls = false;
 
     private void Awake()
     {
@@ -35,40 +39,48 @@ public class EnemyHealth : MonoBehaviour
     private void Start()
     {
         currentHealth = startingHealth;
+
+        // 1. Grava a posição exata do monstro no mapa
+        _initialPosition = transform.position;
+
+        // 2. REGISTRO AUTOMÁTICO: O monstro se apresenta ao cérebro da fogueira
+        if (BonfireManager.Instance != null)
+        {
+            BonfireManager.Instance.RegisterEnemy(this);
+        }
     }
 
     public void TakeDamage(int damage)
-{
-    float finalDamage = damage;
-
-    if (_myStats != null && defenseStatType != null)
     {
-        int defenseValue = _myStats.GetStatValue(defenseStatType);
-        float mitigation = defenseValue / 100f;
-        mitigation = Mathf.Clamp(mitigation, 0f, 0.9f);
-        finalDamage = damage * (1f - mitigation);
+        // Se já estiver morto (desativado ou no frame de morte), ignora dano residual
+        if (currentHealth <= 0) return;
 
-        Debug.Log($"{gameObject.name} mitigou o dano de {damage} para {Mathf.RoundToInt(finalDamage)}");
+        float finalDamage = damage;
+
+        if (_myStats != null && defenseStatType != null)
+        {
+            int defenseValue = _myStats.GetStatValue(defenseStatType);
+            float mitigation = defenseValue / 100f;
+            mitigation = Mathf.Clamp(mitigation, 0f, 0.9f);
+            finalDamage = damage * (1f - mitigation);
+
+            Debug.Log($"{gameObject.name} mitigou o dano de {damage} para {Mathf.RoundToInt(finalDamage)}");
+        }
+
+        currentHealth -= Mathf.RoundToInt(finalDamage);
+
+        if (_healthBar != null)
+        {
+            _healthBar.UpdateHealthBar(currentHealth, startingHealth);
+        }
+        
+        if(knockBack) knockBack.GetKnockedBack(PlayerController.Instance.transform, knockBackThrust);
+        if(flash) StartCoroutine(flash.FlashRoutine());
+        StartCoroutine(CheckDetectDeathRoutine());
     }
-
-    // 1. Primeiro subtraímos a vida
-    currentHealth -= Mathf.RoundToInt(finalDamage);
-
-    // 2. DEPOIS atualizamos a barra (com o valor já reduzido)
-    if (_healthBar != null)
-    {
-        _healthBar.UpdateHealthBar(currentHealth, startingHealth);
-    }
-    
-    // (Knockback, Flash, Death Check...)
-    if(knockBack) knockBack.GetKnockedBack(PlayerController.Instance.transform, knockBackThrust);
-    if(flash) StartCoroutine(flash.FlashRoutine());
-    StartCoroutine(CheckDetectDeathRoutine());
-}
 
     private IEnumerator CheckDetectDeathRoutine()
     {
-        // Se houver flash, espera. Se não, checa a morte direto.
         float waitTime = flash != null ? flash.GetRestoreMatTime() : 0.1f;
         yield return new WaitForSeconds(waitTime);
         DetectDeath();
@@ -78,19 +90,44 @@ public class EnemyHealth : MonoBehaviour
     {
         if (currentHealth <= 0)
         {
-            // Entrega das Almas
-            if (PlayerController.Instance != null)
+            // Entrega das Almas apenas uma vez por ciclo de fogueira
+            if (PlayerController.Instance != null && !_hasDroppedSouls)
             {
                 PlayerProgression playerXP = PlayerController.Instance.GetComponent<PlayerProgression>();
                 if (playerXP != null)
                 {
                     playerXP.AddSouls(polenDropped);
+                    _hasDroppedSouls = true; // Impede ganho infinito de Pólen
                 }
             }
 
-            // VFX e Destruição
             if (deathVFXPrefab) Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
-            Destroy(gameObject);
+            
+            // CORREÇÃO CRUCIAL: Em vez de Destroy, desativamos o objeto para ele não sumir da hierarquia
+            gameObject.SetActive(false);
         }
+    }
+
+    // INTERFACE DE COMANDO DA FOGUEIRA: Reseta o monstro para as configurações de fábrica
+    public void ResetEnemyToDefaultState()
+    {
+        // 1. Move o monstro de volta para onde ele nasceu
+        transform.position = _initialPosition;
+
+        // 2. Restaura os status vitais
+        currentHealth = startingHealth;
+        _hasDroppedSouls = false;
+
+        // 3. Atualiza a barra de vida para o visual cheio
+        if (_healthBar != null)
+        {
+            _healthBar.UpdateHealthBar(currentHealth, startingHealth);
+        }
+
+        // 4. Se o monstro possui IA de Patrulha, força o script de IA a atualizar a sua posição âncora
+        GetComponent<EnemyIA>()?.ResetSpawnAnchor(_initialPosition);
+
+        // 5. Acorda o GameObject novamente na cena
+        gameObject.SetActive(true);
     }
 }

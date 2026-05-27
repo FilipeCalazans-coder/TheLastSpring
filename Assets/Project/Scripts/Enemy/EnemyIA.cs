@@ -138,4 +138,14 @@ public class EnemyIA : MonoBehaviour
         Gizmos.color = Color.red; // Área onde ele ataca
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
+
+    // Método utilitário chamado pelo EnemyHealth quando o Brotinho de Resplendor é ativado
+    public void ResetSpawnAnchor(Vector2 newSpawnPos)
+    {
+        _startPosition = newSpawnPos;
+        _currentState = State.Patrolling; // Força o monstro a voltar a patrulhar em paz
+        _isAttacking = false;
+        _patrolTimer = 0f;
+        _roamPosition = GetRandomRoamPosition(); // Sorteia um novo ponto baseado no spawn resetado
+    }
 }

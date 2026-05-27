@@ -7,6 +7,9 @@ public class BonfireManager : MonoBehaviour
 {
     public static BonfireManager Instance { get; private set; }
 
+    // ESTRUTURA DE CONTROLO: Guarda a referência de todos os scripts de vida dos monstros da fase
+    private List<EnemyHealth> _registeredEnemies = new List<EnemyHealth>();
+
     public ChestInventory bonfireChest;
 
     [Header("Gerenciamento de Respawn")]
@@ -16,17 +19,14 @@ public class BonfireManager : MonoBehaviour
     [SerializeField] private Project.Scripts.Hud.BonfireUI bonfireUI;
     private Vector3 _currentCheckpoint;
 
-    private PlayerHealth _playerHealth;
-    private PlayerStamina _playerStamina; // Adicionei suporte a estamina
-    private PlayerController _playerController;
+    // Removemos as variáveis globais nulas do Start para evitar referências perdidas
 
     private void Awake()
     {
-        // Padrão Singleton
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // O Manager sobrevive entre cenas
+            DontDestroyOnLoad(gameObject); 
         }
         else
         {
@@ -34,19 +34,7 @@ public class BonfireManager : MonoBehaviour
             return;
         }
         
-        // Define o checkpoint inicial caso o jogador morra antes de achar uma fogueira
         _currentCheckpoint = defaultSpawnPoint != null ? defaultSpawnPoint.position : Vector3.zero;
-    }
-
-    private void Start()
-    {
-        // Busca as referências do Player na cena
-        if (PlayerController.Instance != null)
-        {
-            _playerController = PlayerController.Instance;
-            _playerHealth = _playerController.GetComponent<PlayerHealth>();
-            _playerStamina = _playerController.GetComponent<PlayerStamina>();
-        }
     }
 
     // Método chamado pelo BonfireTrigger quando o Player aperta "E"
@@ -54,67 +42,95 @@ public class BonfireManager : MonoBehaviour
     {
         Debug.Log("<color=#FFD700>Descansando no Brotinho de Resplendor...</color>");
 
-        // 1. Atualiza o Checkpoint para a posição desta fogueira
-        _currentCheckpoint = bonfireLocation.position;
-
-        // 2. Cura Total (HP e Estamina)
-        if (_playerHealth != null)
-        {
-            // O UpdateMaxHealth já recarrega a vida para o máximo baseado na Vitalidade
-            _playerHealth.UpdateMaxHealth(); 
-        }
-        
-        if (_playerStamina != null)
-        {
-            _playerStamina.ResetStamina();
-        }
-
         // 3. Reset do Mundo (Inimigos)
         RespawnEnemies();
 
-        // 4. Salva o Jogo (Integração com o seu PlayerProgression)
-        if (_playerController != null)
+        _currentCheckpoint = bonfireLocation.position;
+
+        // CORREÇÃO: Busca o Player dinamicamente para garantir que a fogueira ache a Fiorella atual da cena
+        PlayerController player = PlayerController.Instance;
+        if (player != null)
         {
-            _playerController.GetComponent<PlayerProgression>()?.SaveProgression();
+            PlayerHealth health = player.GetComponent<PlayerHealth>();
+            PlayerStamina stamina = player.GetComponent<PlayerStamina>();
+
+            if (health != null) health.UpdateMaxHealth(); 
+            if (stamina != null) stamina.ResetStamina();
+
+            player.GetComponent<PlayerProgression>()?.SaveProgression();
         }
-        
-        // 5. Abre o Menu e pausa o jogo
+
         if (bonfireUI != null)
         {
             bonfireUI.ShowMenu();
-            Time.timeScale = 0f; // Congela os inimigos e o jogador enquanto o menu está aberto
+            Time.timeScale = 0f; // Pausa o mundo
         }
     }
 
+    // CORREÇÃO CRUCIAL: Modificado para garantir que o teleporte aconteça mesmo se a referência antiga quebrou
     public void RespawnPlayerAtLastBonfire()
     {
-        if (_playerController != null)
+        // Garante que o tempo do jogo voltou ao normal caso ela tenha morrido em transição de menus
+        Time.timeScale = 1f; 
+
+        PlayerController player = PlayerController.Instance;
+
+        if (player != null)
         {
-            // 1. Teleporta
-            _playerController.transform.position = _currentCheckpoint;
+            // 1. Teleporta Fiorella para a coordenada do Checkpoint salvo
+            player.transform.position = _currentCheckpoint;
             
-            // 2. REATIVAR COLLIDER (A correção que faltava)
-            PlayerProgression prog = _playerController.GetComponent<PlayerProgression>();
+            // 2. Reativa o corpo físico/colisores
+            PlayerProgression prog = player.GetComponent<PlayerProgression>();
             if (prog != null) prog.ReEnablePlayerCollider();
             
-            // 3. Restaura vida e estamina
-            _playerHealth?.UpdateMaxHealth();
-            _playerStamina?.ResetStamina();
+            // 3. Recupera os status restaurando os scripts direto do player ativo
+            PlayerHealth health = player.GetComponent<PlayerHealth>();
+            PlayerStamina stamina = player.GetComponent<PlayerStamina>();
+
+            if (health != null) health.UpdateMaxHealth();
+            if (stamina != null) stamina.ResetStamina();
             
-            Debug.Log("Fiorella renasceu com o corpo físico reativado.");
+            RespawnEnemies();
+
+            // 4. GARANTE A REATIVAÇÃO DOS CONTROLES: Se o script de vida desativou o controller na morte, reativamos aqui!
+            player.enabled = true;
+
+            Debug.Log($"<color=green>Fiorella teleportada com sucesso para {_currentCheckpoint} e controles reativados!</color>");
+        }
+        else
+        {
+            // Log de erro explícito caso o Player não tenha a Tag correta ou o script não esteja na cena
+            Debug.LogError("ERRO CRÍTICO: BonfireManager não conseguiu encontrar a instância do PlayerController na cena para realizar o Respawn!");
         }
     }
 
+// Método que cada inimigo chamará no seu próprio Start() para entrar na lista
+    public void RegisterEnemy(EnemyHealth enemy)
+    {
+        if (!_registeredEnemies.Contains(enemy))
+        {
+            _registeredEnemies.Add(enemy);
+        }
+    }
+
+    // CORREÇÃO DA MÁGICA: Chamado dentro do método RestAtBonfire() e RespawnPlayerAtLastBonfire()
     private void RespawnEnemies()
     {
-        // Aqui você pode adicionar a lógica para reviver inimigos comuns.
-        // A forma mais comum de fazer isso na Unity é guardar a posição inicial
-        // de cada inimigo em um array no Start() da cena, e agora instanciar o Prefab neles.
-        Debug.Log("Inimigos comuns foram revividos pelo descanso na Fogueira.");
+        Debug.Log($"<color=#00FF7F>Brotinho de Resplendor restaurando {_registeredEnemies.Count} inimigos comuns...</color>");
+
+        foreach (EnemyHealth enemy in _registeredEnemies)
+        {
+            if (enemy != null)
+            {
+                // Executa a restauração completa dentro de cada monstro registrado
+                enemy.ResetEnemyToDefaultState();
+            }
+        }
     }
 
     public void CloseMenuAndResumeGame()
     {
-        Time.timeScale = 1f; // Descongela o jogo
+        Time.timeScale = 1f; 
     }
 }

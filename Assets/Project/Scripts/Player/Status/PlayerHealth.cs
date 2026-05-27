@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -15,6 +14,9 @@ public class PlayerHealth : MonoBehaviour
     private float _currentHealth;
     private BaseStats _stats;
     public bool isInvulnerable { get; set; }
+    
+    // CORREÇÃO: Variável de controle para evitar que Die() seja chamado múltiplas vezes
+    private bool _isDead = false; 
 
     private void Awake()
     {
@@ -26,11 +28,10 @@ public class PlayerHealth : MonoBehaviour
         UpdateMaxHealth();
     }
 
-    // Calcula o HP Máximo baseado na Vitalidade
     public float GetMaxHealth()
     {
         int vit = _stats.GetStatValue(vitalityStat);
-        return vit * 10f; // Cada ponto de Vitalidade dá 10 de HP
+        return vit * 10f; 
     }
 
     public void UpdateMaxHealth()
@@ -41,14 +42,15 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        // Se estiver em I-Frame, ignora o dano completamente
+        // Se já estiver morta, ignora novos danos
+        if (_isDead) return;
+
         if (isInvulnerable) 
         {
             Debug.Log("<color=white>Dano desviado! (I-Frame)</color>");
             return; 
         }
         
-        // Usamos a mesma lógica de defesa percentual que criamos para o inimigo!
         int def = _stats.GetStatValue(defenseStat);
         float mitigation = Mathf.Clamp(def / 100f, 0f, 0.9f);
         
@@ -73,11 +75,36 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
+        _isDead = true; // Trava o estado de morte
+        
         // 1. Drop das almas (Pólen) no local da morte
         GetComponent<PlayerProgression>().DropSoulsOnDeath();
 
-        // 2. Não carregamos a cena novamente. 
-        // Em vez disso, pedimos ao Manager da Fogueira para nos levar ao último Checkpoint.
+        // 2. Inicia o processo de animação e espera antes do Respawn
+        StartCoroutine(DeathSequenceRoutine());
+    }
+
+    private IEnumerator DeathSequenceRoutine()
+    {
+        Debug.Log("Fiorella Iniciou a animação de morte...");
+
+        // 3. Desativa os controles e física da Fiorella para ela não andar morta
+        PlayerController playerController = GetComponent<PlayerController>();
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        Animator animator = GetComponent<Animator>();
+
+        if (playerController != null) playerController.enabled = false;
+        if (rb != null) rb.linearVelocity = Vector2.zero; // Faz ela parar imediatamente no chão
+        
+        // 4. Toca o gatilho de animação de morte no seu Animator (Crie um Trigger chamado "Die" lá)
+       
+        // 5. TEMPO DE ESPERA (ex: 2.5 segundos para o jogador ver a Fiorella caída)
+        yield return new WaitForSeconds(2.5f);
+
+        // 6. Opcional: Chamar o fade de tela preta aqui se tiver (SceneFader)
+        // Ex: if (SceneFader.Instance != null) yield return SceneFader.Instance.FadeIn();
+
+        // 7. Agora sim, faz o teleporte para o checkpoint
         if (BonfireManager.Instance != null)
         {
             BonfireManager.Instance.RespawnPlayerAtLastBonfire();
@@ -86,9 +113,14 @@ public class PlayerHealth : MonoBehaviour
         {
             // Fallback de segurança se o Manager não existir
             transform.position = Vector3.zero; 
-            _currentHealth = GetMaxHealth();
-            UpdateUI();
         }
+
+        // 8. Restaura a vida e reativa os controles após o teleporte concluir
+        _currentHealth = GetMaxHealth();
+        UpdateUI();
+        
+        if (playerController != null) playerController.enabled = true;
+        _isDead = false; // Permite que ela possa morrer novamente no futuro
     }
 
     public void SetHealthBar(Slider bar)
