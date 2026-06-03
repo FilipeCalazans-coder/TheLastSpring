@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
     
     private bool facingLeft = false;
     private bool isDashing = false;
+    public bool IsDashing => isDashing;
+    private PlayerToxicResinReceiver _resinReceiver;
 
     private void Awake()
     {
@@ -33,6 +35,7 @@ public class PlayerController : MonoBehaviour
         myAnimator = GetComponent<Animator>();
         mySpriteRenderer = GetComponent<SpriteRenderer>();
         _mainCamera = Camera.main; // OTIMIZAÇÃO APLICADA AQUI
+        _resinReceiver = GetComponent<PlayerToxicResinReceiver>();
     }
 
     private void Start()
@@ -76,7 +79,8 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        float finalSpeed = _currentSpeed * _itemSpeedMultiplier;
+        float resinMultiplier = (_resinReceiver != null) ? _resinReceiver.CurrentSpeedMultiplier : 1f;
+        float finalSpeed = _currentSpeed * _itemSpeedMultiplier * resinMultiplier;
         rb.MovePosition(rb.position + movement * (finalSpeed * Time.fixedDeltaTime));
     }
 
