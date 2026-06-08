@@ -27,6 +27,15 @@ public class SceneFader : MonoBehaviour
         StartCoroutine(FadeRoutine(sceneName));
     }
 
+    /// <summary>
+    /// Garante que a tela não fique presa no overlay preto após um carregamento de cena.
+    /// </summary>
+    public void EnsureVisible()
+    {
+        fadeCanvasGroup.alpha = 0f;
+        fadeCanvasGroup.blocksRaycasts = false;
+    }
+
     private IEnumerator FadeRoutine(string sceneName)
     {
         // 1. Fade In (Tela fica preta)

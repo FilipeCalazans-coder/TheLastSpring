@@ -8,7 +8,7 @@ namespace Project.Scripts.UI
     public class CutsceneManager : MonoBehaviour
     {
         [Header("Configurações da Cutscene")]
-        [Tooltip("Arraste aqui as 4 imagens da cutscene em ordem.")]
+        [Tooltip("Arraste aqui as imagens da cutscene em ordem.")]
         [SerializeField] private Sprite[] cutsceneImages;
         [Tooltip("Tempo em segundos que cada imagem fica na tela.")]
         [SerializeField] private float timePerImage = 3f;
@@ -18,51 +18,62 @@ namespace Project.Scripts.UI
         [Header("Referências")]
         [Tooltip("A imagem da UI que vai mostrar a cutscene.")]
         [SerializeField] private Image displayImage;
+        [Tooltip("O painel preto de fundo da cutscene (será escondido antes de carregar a cena).")]
+        [SerializeField] private GameObject cutscenePanel;
         [Tooltip("O nome da cena que deve carregar depois da cutscene.")]
-        [SerializeField] private string nextSceneName = "GameScene";
+        [SerializeField] private string nextSceneName = "Ruins_Ancestrals";
 
-        private void Start()
+        private Coroutine _cutsceneRoutine;
+
+        private void OnEnable()
         {
-            // CORREÇÃO: "Length" com 'L' maiúsculo
-            if (cutsceneImages.Length > 0)
+            _cutsceneRoutine = StartCoroutine(BeginCutscene());
+        }
+
+        private void OnDisable()
+        {
+            if (_cutsceneRoutine != null)
             {
-                StartCoroutine(PlayCutscene());
+                StopCoroutine(_cutsceneRoutine);
+                _cutsceneRoutine = null;
             }
-            else
+        }
+
+        private IEnumerator BeginCutscene()
+        {
+            if (displayImage == null)
             {
-                Debug.LogWarning("Nenhuma imagem configurada na cutscene!");
-                LoadNextScene();
+                Debug.LogError("[CutsceneManager] displayImage não está configurado no Inspector.");
+                yield return LoadNextScene();
+                yield break;
             }
+
+            if (cutsceneImages == null || cutsceneImages.Length == 0)
+            {
+                Debug.LogWarning("[CutsceneManager] Nenhuma imagem configurada. Carregando cena diretamente.");
+                yield return LoadNextScene();
+                yield break;
+            }
+
+            yield return PlayCutscene();
         }
 
         private IEnumerator PlayCutscene()
         {
-            // Garante que a imagem está totalmente transparente no início
             SetImageAlpha(0f);
 
             for (int i = 0; i < cutsceneImages.Length; i++)
             {
-                // Troca a imagem
                 displayImage.sprite = cutsceneImages[i];
-
-                // Efeito de Fade In (Aparecer)
                 yield return StartCoroutine(FadeImage(0f, 1f));
-
-                // Espera o tempo determinado com a imagem na tela
                 yield return new WaitForSeconds(timePerImage);
 
-                // Efeito de Fade Out (Desaparecer)
-                // Pula o Fade Out se for a última imagem, para ir direto pro jogo escuro
                 if (i < cutsceneImages.Length - 1)
-                {
                     yield return StartCoroutine(FadeImage(1f, 0f));
-                }
             }
 
-            // Fade out final mais longo antes de carregar o jogo
             yield return StartCoroutine(FadeImage(1f, 0f));
-            
-            LoadNextScene();
+            yield return LoadNextScene();
         }
 
         private IEnumerator FadeImage(float startAlpha, float targetAlpha)
@@ -73,13 +84,11 @@ namespace Project.Scripts.UI
             while (elapsedTime < fadeDuration)
             {
                 elapsedTime += Time.deltaTime;
-                // Interpola a transparência suavemente
                 color.a = Mathf.Lerp(startAlpha, targetAlpha, elapsedTime / fadeDuration);
                 displayImage.color = color;
                 yield return null;
             }
 
-            // Garante que o valor final exato seja aplicado
             color.a = targetAlpha;
             displayImage.color = color;
         }
@@ -91,17 +100,62 @@ namespace Project.Scripts.UI
             displayImage.color = c;
         }
 
-        private void LoadNextScene()
+        private IEnumerator LoadNextScene()
         {
+            if (string.IsNullOrWhiteSpace(nextSceneName))
+            {
+                Debug.LogError("[CutsceneManager] nextSceneName está vazio. Configure no Inspector.");
+                yield break;
+            }
 
-            SceneManager.LoadScene(nextSceneName);
+            if (!IsSceneInBuildSettings(nextSceneName))
+            {
+                Debug.LogError(
+                    $"[CutsceneManager] A cena '{nextSceneName}' não está em File → Build Settings. " +
+                    "Adicione a cena e faça um novo build.");
+                yield break;
+            }
+
+            if (cutscenePanel != null)
+                cutscenePanel.SetActive(false);
+
+            Debug.Log($"[CutsceneManager] Carregando cena: {nextSceneName}");
+
+            AsyncOperation operation = SceneManager.LoadSceneAsync(nextSceneName);
+            if (operation == null)
+            {
+                Debug.LogError($"[CutsceneManager] Falha ao iniciar carregamento da cena '{nextSceneName}'.");
+                yield break;
+            }
+
+            operation.allowSceneActivation = true;
+
+            while (!operation.isDone)
+                yield return null;
+
+            if (SceneFader.Instance != null)
+                SceneFader.Instance.EnsureVisible();
+
+            Debug.Log($"[CutsceneManager] Cena '{nextSceneName}' carregada com sucesso.");
         }
 
-        // Função para colocar um botão "Pular Cutscene"
+        private static bool IsSceneInBuildSettings(string sceneName)
+        {
+            for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+            {
+                string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+                string sceneNameFromPath = System.IO.Path.GetFileNameWithoutExtension(scenePath);
+                if (sceneNameFromPath == sceneName)
+                    return true;
+            }
+
+            return false;
+        }
+
         public void SkipCutscene()
         {
             StopAllCoroutines();
-            LoadNextScene();
+            StartCoroutine(LoadNextScene());
         }
     }
 }

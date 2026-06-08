@@ -647,7 +647,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a86293750d13ca4e9a819866401ee7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
-  gameSceneName: Test
+  gameSceneName: Ruins_Ancestrals
   continueButton: {fileID: 1410124185}
   mainMenuPanel: {fileID: 357113118}
   cutsceneManager: {fileID: 2023999341}
@@ -2028,7 +2028,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2023999342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2050,7 +2050,8 @@ MonoBehaviour:
   timePerImage: 5
   fadeDuration: 1
   displayImage: {fileID: 588902696}
-  nextSceneName: Test
+  cutscenePanel: {fileID: 1656776465}
+  nextSceneName: Ruins_Ancestrals
 --- !u!4 &2023999343
 Transform:
   m_ObjectHideFlags: 0

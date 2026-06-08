@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class MainMenuController : MonoBehaviour
 {
     [Header("Configuração de Cenas")]
-    [SerializeField] private string gameSceneName = "Test"; // Nome da sua cena principal
+    [SerializeField] private string gameSceneName = "Ruins_Ancestrals";
 
     [Header("Referências de UI")]
     [SerializeField] private Button continueButton;
@@ -40,17 +40,21 @@ public class MainMenuController : MonoBehaviour
         // 2. Esconde o menu
         mainMenuPanel.SetActive(false);
 
-        // 3. Liga a tela preta e o script da cutscene
-        // OBS: Não precisamos de LoadScene aqui! O CutsceneManager cuidará disso no final.
+        // 3. Liga a tela preta e o script da cutscene.
+        // Desliga e religa o manager para garantir que OnEnable rode (mesmo se já estiver ativo).
         cutscenePanel.SetActive(true);
-        cutsceneManager.SetActive(true); 
+        cutsceneManager.SetActive(false);
+        cutsceneManager.SetActive(true);
     }
 
     public void ContinueGame()
     {
-        // Como o Start já validou o botão, aqui apenas carregamos a cena.
         Debug.Log("<color=cyan>Carregando Memória do Jardim...</color>");
-        SceneManager.LoadScene(gameSceneName);
+
+        if (SceneFader.Instance != null)
+            SceneFader.Instance.FadeAndLoadScene(gameSceneName);
+        else
+            SceneManager.LoadScene(gameSceneName);
     }
 
     public void QuitGame()
