@@ -116,27 +116,26 @@ namespace Project.Scripts.UI
                 yield break;
             }
 
+            // Esconde o painel preto de trás da cutscene, 
+            // pois o SceneFader vai assumir a tela preta da frente.
             if (cutscenePanel != null)
                 cutscenePanel.SetActive(false);
 
-            Debug.Log($"[CutsceneManager] Carregando cena: {nextSceneName}");
+            Debug.Log($"[CutsceneManager] Passando o controle de transição para o SceneFader...");
 
-            AsyncOperation operation = SceneManager.LoadSceneAsync(nextSceneName);
-            if (operation == null)
+            // CORREÇÃO DEFINITIVA: Passamos o bastão para o SceneFader. 
+            // Como ele NÃO é destruído, a coroutine vai até ao fim em segurança!
+            if (SceneFader.Instance != null)
             {
-                Debug.LogError($"[CutsceneManager] Falha ao iniciar carregamento da cena '{nextSceneName}'.");
-                yield break;
+                SceneFader.Instance.LoadSceneFromCutscene(nextSceneName);
+            }
+            else
+            {
+                // Caso falhe de alguma forma, usamos o método base da Unity
+                SceneManager.LoadScene(nextSceneName);
             }
 
-            operation.allowSceneActivation = true;
-
-            while (!operation.isDone)
-                yield return null;
-
-            if (SceneFader.Instance != null)
-                SceneFader.Instance.EnsureVisible();
-
-            Debug.Log($"[CutsceneManager] Cena '{nextSceneName}' carregada com sucesso.");
+            yield break;
         }
 
         private static bool IsSceneInBuildSettings(string sceneName)

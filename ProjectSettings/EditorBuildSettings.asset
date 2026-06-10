@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Project/Scenes/MPV Level/Ruins_Ancestrals.unity
     guid: 250709b612be0eb4cadc3ce8d2d27f14
+  - enabled: 1
+    path: Assets/Project/Scenes/Test.unity
+    guid: 5d73374a86a9a1241b170db9ac6385f3
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 3590b91b4603b465dbb4216d601bff33, type: 3}
   m_UseUCBPForAssetBundles: 0

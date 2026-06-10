@@ -55,7 +55,14 @@ public class EnemyIA : MonoBehaviour
         {
             case State.Patrolling:
                 PatrolLogic();
-                if (distanceToPlayer < chaseRange) _currentState = State.Chasing;
+                if (distanceToPlayer < chaseRange) 
+                {
+                    _currentState = State.Chasing;
+                    
+                    // NOVO: Quando começar a perseguir, toca a música de combate!
+                    if (Project.Scripts.Audio.AudioManager.Instance != null)
+                        Project.Scripts.Audio.AudioManager.Instance.PlayCombatMusic();
+                }
                 break;
 
             case State.Chasing:
@@ -68,6 +75,10 @@ public class EnemyIA : MonoBehaviour
                 {
                     _currentState = State.Patrolling;
                     _roamPosition = GetRandomRoamPosition(); 
+                    
+                    // NOVO: Quando o inimigo desistir e voltar a patrulhar, volta a música calma!
+                    if (Project.Scripts.Audio.AudioManager.Instance != null)
+                        Project.Scripts.Audio.AudioManager.Instance.PlayAmbientMusic();
                 }
                 break;
         }

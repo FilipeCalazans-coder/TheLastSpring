@@ -103,7 +103,13 @@ public class EnemyHealth : MonoBehaviour
 
             if (deathVFXPrefab) Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
             
-            // CORREÇÃO CRUCIAL: Em vez de Destroy, desativamos o objeto para ele não sumir da hierarquia
+            // NOVO: O inimigo morreu! Volta a tocar uma das músicas calmas!
+            if (Project.Scripts.Audio.AudioManager.Instance != null)
+            {
+                Project.Scripts.Audio.AudioManager.Instance.PlayAmbientMusic();
+            }
+            
+            // Desativamos o objeto para ele não sumir da hierarquia
             gameObject.SetActive(false);
         }
     }

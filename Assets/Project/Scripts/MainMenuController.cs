@@ -45,11 +45,19 @@ public class MainMenuController : MonoBehaviour
         cutscenePanel.SetActive(true);
         cutsceneManager.SetActive(false);
         cutsceneManager.SetActive(true);
+
+        // NOVO: Toca a música de exploração (Ambiente) ao começar
+        if (Project.Scripts.Audio.AudioManager.Instance != null)
+            Project.Scripts.Audio.AudioManager.Instance.PlayAmbientMusic();
     }
 
     public void ContinueGame()
     {
         Debug.Log("<color=cyan>Carregando Memória do Jardim...</color>");
+
+        // NOVO: Toca a música de exploração ao continuar
+        if (Project.Scripts.Audio.AudioManager.Instance != null)
+            Project.Scripts.Audio.AudioManager.Instance.PlayAmbientMusic();
 
         if (SceneFader.Instance != null)
             SceneFader.Instance.FadeAndLoadScene(gameSceneName);
