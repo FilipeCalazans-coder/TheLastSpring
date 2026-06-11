@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17549822854a56149aa0f937412f637a, type: 3}
+  m_Name: MudaMagica
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Skills.SkillData
+  skillName: "Muda M\xE1gica"
+  description: "Planta uma muda, e na segunda ativa\xE7\xE3o teleporta Fiorella para
+    a posi\xE7\xE3o da muda."
+  icon: {fileID: 0}
+  pollenCost: 100
+  prerequisites:
+  - {fileID: 11400000, guid: ec6c4623b189f934c8b871cbdb16ec93, type: 2}
+  - {fileID: 11400000, guid: 4d1525506eac2424eadefd30d286fb85, type: 2}
+  activeMechanicID: teleporte

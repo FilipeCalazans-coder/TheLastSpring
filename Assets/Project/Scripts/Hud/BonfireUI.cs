@@ -7,14 +7,16 @@ namespace Project.Scripts.Hud
     public class BonfireUI : MonoBehaviour
     {
         [Header("Painéis")]
-        public GameObject mainMenuPanel; // O painel com os 3 botões iniciais
+        public GameObject mainMenuPanel; // O painel com os botões iniciais
         public GameObject levelUpPanel;  // O painel de gastar Pólen (Level Up)
         public GameObject storagePanel;  // O painel do Baú (Armazenamento)
+        public GameObject skillTreePanel; // NOVO: O painel da Árvore de Habilidades
         public ChestUI chestUI;
 
         [Header("Botões do Menu Principal")]
         public Button btnLevelUp;
         public Button btnStorage;
+        public Button btnSkillTree; // NOVO: Botão para abrir a Árvore
         public Button btnLeave;
 
         [Header("Controle de Inventário")]
@@ -26,9 +28,10 @@ namespace Project.Scripts.Hud
             gameObject.SetActive(false);
 
             // Adiciona os eventos de clique via código
-            btnLevelUp.onClick.AddListener(OpenLevelUp);
-            btnStorage.onClick.AddListener(OpenStorage);
-            btnLeave.onClick.AddListener(CloseBonfire);
+            if (btnLevelUp != null) btnLevelUp.onClick.AddListener(OpenLevelUp);
+            if (btnStorage != null) btnStorage.onClick.AddListener(OpenStorage);
+            if (btnSkillTree != null) btnSkillTree.onClick.AddListener(OpenSkillTree); // Conecta o novo botão
+            if (btnLeave != null) btnLeave.onClick.AddListener(CloseBonfire);
         }
 
         // Chamado pelo BonfireManager
@@ -36,9 +39,10 @@ namespace Project.Scripts.Hud
         {
             gameObject.SetActive(true);
             mainMenuPanel.SetActive(true);
-            levelUpPanel.SetActive(false);
             
+            if(levelUpPanel != null) levelUpPanel.SetActive(false);
             if(storagePanel != null) storagePanel.SetActive(false);
+            if(skillTreePanel != null) skillTreePanel.SetActive(false); // Garante que a árvore fecha
         }
 
         public void OpenLevelUp()
@@ -66,7 +70,16 @@ namespace Project.Scripts.Hud
             Debug.Log("<color=yellow>Abrindo o Baú de Raízes...</color>");
         }
 
-        // Volta do LevelUp/Baú para o menu principal do Brotinho
+        // NOVO: Método para abrir a Árvore de Habilidades
+        public void OpenSkillTree()
+        {
+            mainMenuPanel.SetActive(false);
+            if (skillTreePanel != null) skillTreePanel.SetActive(true);
+            
+            Debug.Log("<color=magenta>Acessando a Árvore de Habilidades...</color>");
+        }
+
+        // Volta do LevelUp/Baú/Árvore para o menu principal do Brotinho
         public void BackToMainMenu()
         {
             ShowMenu();
@@ -79,7 +92,7 @@ namespace Project.Scripts.Hud
             {
                 inventoryUI.ForceToggleInventory();
             }
-
+            
             gameObject.SetActive(false);
             BonfireManager.Instance.CloseMenuAndResumeGame();
         }
