@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MinasTerrestres
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Skills.SkillData
   skillName: Minas Terrestres
-  description: "Lan\xE7a minas terrestres que explodem ao contato com um inimigo."
+  description: Aperte Z para soltar uma mina que explode ao contato.
   icon: {fileID: 0}
   pollenCost: 100
   prerequisites: []

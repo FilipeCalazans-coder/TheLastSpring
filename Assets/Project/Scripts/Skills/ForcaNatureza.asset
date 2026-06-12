@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 17549822854a56149aa0f937412f637a, type: 3}
-  m_Name: DashDano
+  m_Name: ForcaNatureza
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Skills.SkillData
-  skillName: Dash Com Dano
-  description: "D\xE1 um dash para frente e causa dano em tudo o que atingir"
+  skillName: "For\xE7a da Natureza"
+  description: Aperte C para dar um knockback e uma quantia de dano em tudo ao seu
+    redor.
   icon: {fileID: 0}
   pollenCost: 100
   prerequisites:
   - {fileID: 11400000, guid: c457d6a353b708e498db0412e8ebab03, type: 2}
-  activeMechanicID: dash_dano
+  activeMechanicID: afastamento

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 17549822854a56149aa0f937412f637a, type: 3}
-  m_Name: MudaMagica
+  m_Name: BrotoMagico
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Skills.SkillData
-  skillName: "Muda M\xE1gica"
-  description: "Planta uma muda, e na segunda ativa\xE7\xE3o teleporta Fiorella para
-    a posi\xE7\xE3o da muda."
+  skillName: "Brotinho M\xE1gico"
+  description: "Aperte V uma vez para plantar um brotinho no ch\xE3o, aperte V novamente
+    para ser teleportado at\xE9 o brotinho."
   icon: {fileID: 0}
   pollenCost: 100
   prerequisites:

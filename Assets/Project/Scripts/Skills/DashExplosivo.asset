@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 17549822854a56149aa0f937412f637a, type: 3}
-  m_Name: Afastamento
+  m_Name: DashExplosivo
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Skills.SkillData
-  skillName: "For\xE7a da Natureza"
-  description: "Libera uma onda de energia que d\xE1 dano e empurra os inimigos para
-    longe"
+  skillName: Dash Explosivo
+  description: Aperte X para dar um dash que causa dano em tudo o que encostar.
   icon: {fileID: 0}
   pollenCost: 100
   prerequisites:
   - {fileID: 11400000, guid: c457d6a353b708e498db0412e8ebab03, type: 2}
-  activeMechanicID: afastamento
+  activeMechanicID: dash_dano
