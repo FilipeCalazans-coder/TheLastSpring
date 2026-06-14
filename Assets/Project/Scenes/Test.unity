@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &3947862 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7927590742725733764, guid: 13c3ce826d5c11a4bb6ba58b3bcb0683, type: 3}
+  m_PrefabInstance: {fileID: 420564944991880186}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &58942638
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27033,6 +27038,68 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8365940560273355063, guid: 13c3ce826d5c11a4bb6ba58b3bcb0683, type: 3}
   m_PrefabInstance: {fileID: 420564944991880186}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1205091890 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -2016329908154551630, guid: 13c3ce826d5c11a4bb6ba58b3bcb0683, type: 3}
+  m_PrefabInstance: {fileID: 420564944991880186}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3947862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcaf6ccee6b0efc479ef5f9b85c73a08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStamina
+--- !u!114 &1205091891 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -5414621525420059557, guid: 13c3ce826d5c11a4bb6ba58b3bcb0683, type: 3}
+  m_PrefabInstance: {fileID: 420564944991880186}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3947862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2ebff4505f85c04b8aead6592e5a20d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+--- !u!114 &1205091893 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4500700255550932335, guid: 13c3ce826d5c11a4bb6ba58b3bcb0683, type: 3}
+  m_PrefabInstance: {fileID: 420564944991880186}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3947862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93486d29ea156614d9c2ac23d86407a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BaseStats
+--- !u!114 &1205091896 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7059002946309431623, guid: 13c3ce826d5c11a4bb6ba58b3bcb0683, type: 3}
+  m_PrefabInstance: {fileID: 420564944991880186}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3947862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d11c33b75271ff2499cda5aed881bb69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+--- !u!114 &1205091898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3947862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74a9537d0bdd848428bca13a80e0d8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerToxicResinReceiver
+  playerController: {fileID: 1205091896}
+  playerHealth: {fileID: 1205091891}
+  playerStamina: {fileID: 1205091890}
+  baseStats: {fileID: 1205091893}
+  resistanceStat: {fileID: 11400000, guid: 86c12eab7c81de24a8db1c274dab6701, type: 2}
+  hasToxicResinImmunityItem: 0
 --- !u!4 &1208240251 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3608020988019649983, guid: 777544ff40575e54b977280888b4ad36, type: 3}
@@ -32873,8 +32940,20 @@ PrefabInstance:
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4500700255550932335, guid: 13c3ce826d5c11a4bb6ba58b3bcb0683, type: 3}
+      propertyPath: playerStats.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4500700255550932335, guid: 13c3ce826d5c11a4bb6ba58b3bcb0683, type: 3}
+      propertyPath: playerStats.Array.data[4].type
+      value: 
+      objectReference: {fileID: 11400000, guid: 86c12eab7c81de24a8db1c274dab6701, type: 2}
+    - target: {fileID: 4500700255550932335, guid: 13c3ce826d5c11a4bb6ba58b3bcb0683, type: 3}
       propertyPath: playerStats.Array.data[3].baseValue
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4500700255550932335, guid: 13c3ce826d5c11a4bb6ba58b3bcb0683, type: 3}
+      propertyPath: playerStats.Array.data[4].baseValue
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4500700255550932335, guid: 13c3ce826d5c11a4bb6ba58b3bcb0683, type: 3}
       propertyPath: playerStats.Array.data[0].percentMultiplier
@@ -32955,7 +33034,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7927590742725733764, guid: 13c3ce826d5c11a4bb6ba58b3bcb0683, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1205091898}
   m_SourcePrefab: {fileID: 100100000, guid: 13c3ce826d5c11a4bb6ba58b3bcb0683, type: 3}
 --- !u!1001 &1141191682925846354
 PrefabInstance:

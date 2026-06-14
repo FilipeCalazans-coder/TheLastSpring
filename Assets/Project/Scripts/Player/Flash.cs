@@ -7,15 +7,19 @@ public class Flash : MonoBehaviour
     [SerializeField] private Material whiteFlashMat;
     [SerializeField] private float restoreDefaultMatTime = .2f;
 
-
-    private Material defaultMat;
-    private SpriteRenderer spriteRenderer;
-
+    private SpriteRenderer[] spriteRenderers;
+    private Material[] defaultMats;
 
     private void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        defaultMat = spriteRenderer.material;
+        // Pega o SpriteRenderer do pr\u00f3prio GameObject E de todos os filhos
+        spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
+        defaultMats = new Material[spriteRenderers.Length];
+        for (int i = 0; i < spriteRenderers.Length; i++)
+        {
+            if (spriteRenderers[i] != null)
+                defaultMats[i] = spriteRenderers[i].material;
+        }
     }
 
     public float GetRestoreMatTime()
@@ -25,8 +29,20 @@ public class Flash : MonoBehaviour
 
     public IEnumerator FlashRoutine()
     {
-        spriteRenderer.material = whiteFlashMat;
+        // Troca todos pra material de flash
+        for (int i = 0; i < spriteRenderers.Length; i++)
+        {
+            if (spriteRenderers[i] != null)
+                spriteRenderers[i].material = whiteFlashMat;
+        }
+
         yield return new WaitForSeconds(restoreDefaultMatTime);
-        spriteRenderer.material = defaultMat;
+
+        // Restaura cada um pro seu pr\u00f3prio material original
+        for (int i = 0; i < spriteRenderers.Length; i++)
+        {
+            if (spriteRenderers[i] != null && defaultMats[i] != null)
+                spriteRenderers[i].material = defaultMats[i];
+        }
     }
 }

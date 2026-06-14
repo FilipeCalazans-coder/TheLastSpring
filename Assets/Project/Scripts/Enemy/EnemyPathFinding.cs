@@ -18,7 +18,11 @@ public class EnemyPathFinding : MonoBehaviour
     private void FixedUpdate()
     {
         // Se estiver a sofrer knockback, o motor desliga as pernas
-        if (knockBack != null && knockBack.GettingKnockedBack) return;
+        if (knockBack != null && knockBack.GettingKnockedBack)
+        {
+            Debug.Log($"[PathFinding] BLOQUEADO por knockback. linearVelocity atual: {rb.linearVelocity.magnitude:F3}");
+            return;
+        }
 
         // O motor aplica a velocidade atualizada
         rb.linearVelocity = moveDir * moveSpeed;
@@ -28,6 +32,15 @@ public class EnemyPathFinding : MonoBehaviour
     {
         // O cast para (Vector2) garante que ignoramos o maldito Eixo Z!
         moveDir = (targetPosition - (Vector2)transform.position).normalized;
+    }
+
+    /// <summary>
+    /// Define uma direção FIXA de movimento (não persegue um alvo).
+    /// Usado pelo charge: o inimigo se compromete com a direção e não corrige mais.
+    /// </summary>
+    public void MoveInDirection(Vector2 direction)
+    {
+        moveDir = direction.normalized;
     }
 
     public void StopMoving()

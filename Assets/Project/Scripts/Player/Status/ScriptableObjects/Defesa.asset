@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f206c9ba67e9e8941a475458439c0f93, type: 3}
   m_Name: Defesa
   m_EditorClassIdentifier: Assembly-CSharp::StatType
-  statName: 
+  statName: Defesa
   icon: {fileID: 0}
