@@ -722,7 +722,7 @@ GameObject:
   - component: {fileID: 757646476452682870}
   m_Layer: 8
   m_Name: Goblin
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -827,6 +827,7 @@ MonoBehaviour:
   detectionOffset: {x: 0, y: 0.3}
   patrolRadius: 3
   waitTimeBetweenPatrols: 2
+  pauseAnimationSpeedMultiplier: 0.3
   chargePrepareTime: 0.6
   chargeSpeedMultiplier: 3
   chargeDuration: 1
