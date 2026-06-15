@@ -10,11 +10,10 @@ namespace Project.Scripts.Inventory
         [Header("Referências")]
         public GameObject chestPanel; // ARRASTE O PAINEL PRINCIPAL DO BAÚ AQUI
         public Transform itemsGrid; 
-        public GameObject slotPrefab;
+        public GameObject slotPrefab; 
         
         // Esta variável será definida pelo BonfireTrigger quando abrirmos o baú
         public ChestInventory chestInventory;
-
         private List<InventorySlot> _slots = new List<InventorySlot>();
 
         // Método que o BonfireTrigger chamará
@@ -25,16 +24,29 @@ namespace Project.Scripts.Inventory
             UpdateChestUI();
         }
 
+        // ==========================================
+        // ATUALIZADO: Fecha o baú e sincroniza com o inventário
+        // ==========================================
         public void Close()
         {
+            // 1. Esconde a interface visual do baú
             if (chestPanel != null) chestPanel.SetActive(false);
             chestInventory = null;
+
+            // 2. Busca o gerenciador de UI do Inventário na cena
+            InventoryUI inventoryUI = Object.FindFirstObjectByType<InventoryUI>();
+            
+            // 3. Se o inventário foi encontrado e estiver aberto, forçamos o fechamento
+            if (inventoryUI != null && inventoryUI.isOpen)
+            {
+                inventoryUI.ForceToggleInventory();
+                Debug.Log("<color=cyan>Sincronização: Inventário fechado junto com o Baú.</color>");
+            }
         }
 
         public void UpdateChestUI()
         {
             if (chestInventory == null || itemsGrid == null) return;
-
             foreach (Transform child in itemsGrid) Destroy(child.gameObject);
             _slots.Clear();
 
@@ -48,7 +60,6 @@ namespace Project.Scripts.Inventory
                     ItemData item = (i < chestInventory.storedItems.Count) ? chestInventory.storedItems[i] : null;
                     
                     slotScript.SetupSlot(false, item);
-
                     if (item != null)
                     {
                         Button btn = newSlot.GetComponent<Button>();

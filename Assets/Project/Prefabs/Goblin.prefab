@@ -314,6 +314,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDamage
   damageAmount: 10
   playerLayerName: Player
+  damageBlinkColor: {r: 0.9333334, g: 0.3803922, b: 0.28235295, a: 1}
 --- !u!1 &3563735893812795862
 GameObject:
   m_ObjectHideFlags: 0

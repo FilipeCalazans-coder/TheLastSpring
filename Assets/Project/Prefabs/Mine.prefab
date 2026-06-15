@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: 4286732682726996380, guid: 5a6484a458e37654aa73f45edcababd4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -143,4 +143,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Player.Skills.Landmine
   explosionDamage: 20
   duration: 10
-  explosionVFX: {fileID: 1555300746859311974, guid: a5ac7eb817ad9a740a88191d09957608, type: 3}
+  explosionVFX: {fileID: 5614666831606962172, guid: feaaa7d6cd83bfb49a11ee366552b644, type: 3}

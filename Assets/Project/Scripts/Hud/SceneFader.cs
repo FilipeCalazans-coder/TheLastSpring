@@ -2,101 +2,141 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.Video;
+using System; // NOVO: Permite passar blocos de código (Action) como parâmetros
 
 public class SceneFader : MonoBehaviour
 {
-    public static SceneFader Instance; // Singleton para fácil acesso
+    public static SceneFader Instance; 
+
+    [Header("Fade Tradicional (Cor)")]
     [SerializeField] private CanvasGroup fadeCanvasGroup;
     [SerializeField] private float fadeDuration = 1f;
+
+    [Header("Transição de Vídeo (Universal)")]
+    [SerializeField] private VideoPlayer videoPlayer;
+    [SerializeField] private RawImage videoRawImage;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Importante: o fader não pode morrer no LoadScene
+            DontDestroyOnLoad(gameObject); 
         }
         else
         {
             Destroy(gameObject);
         }
+
+        if (videoRawImage != null) videoRawImage.gameObject.SetActive(false);
     }
 
-    public void FadeAndLoadScene(string sceneName)
+    // ==========================================
+    // SISTEMA DE TRANSIÇÃO COM VÍDEO E AÇÃO (EX: MORTE / TELEPORTE)
+    // ==========================================
+    public void PlayVideoTransition(VideoClip enterClip, VideoClip exitClip, Action onMidpointAction)
     {
-        StartCoroutine(FadeRoutine(sceneName));
+        StartCoroutine(VideoTransitionRoutine(enterClip, exitClip, onMidpointAction));
     }
 
-    /// <summary>
-    /// Garante que a tela não fique presa no overlay preto após um carregamento de cena.
-    /// </summary>
-    public void EnsureVisible()
+    private IEnumerator VideoTransitionRoutine(VideoClip enterClip, VideoClip exitClip, Action onMidpointAction)
     {
-        fadeCanvasGroup.alpha = 0f;
-        fadeCanvasGroup.blocksRaycasts = false;
-    }
+        // 1. Bloqueia os cliques na ecrã
+        if (fadeCanvasGroup != null) fadeCanvasGroup.blocksRaycasts = true;
+        if (videoRawImage != null) videoRawImage.gameObject.SetActive(true);
 
-    // NOVO: Faz a tela do Fader ficar preta instantaneamente para assumir a transição
-    public void SetToBlack()
-    {
-        if (fadeCanvasGroup != null)
+        // 2. Toca o vídeo de ENTRADA (Tela vai ficando preta/animada)
+        if (enterClip != null && videoPlayer != null)
         {
-            fadeCanvasGroup.alpha = 1f;
-            fadeCanvasGroup.blocksRaycasts = true;
+            videoPlayer.clip = enterClip;
+            videoPlayer.Play();
+            yield return new WaitForSeconds((float)enterClip.length);
         }
+
+        // 3. MOMENTO CEGO: A tela está coberta! Executamos o que você pediu.
+        // Pode ser curar a vida, mover a personagem de lugar, abrir o baú, etc.
+        onMidpointAction?.Invoke();
+
+        // 4. Toca o vídeo de SAÍDA (Tela volta a revelar o jogo)
+        if (exitClip != null && videoPlayer != null)
+        {
+            videoPlayer.clip = exitClip;
+            videoPlayer.Play();
+            yield return new WaitForSeconds((float)exitClip.length);
+        }
+
+        // 5. Limpa a tela
+        if (videoRawImage != null) videoRawImage.gameObject.SetActive(false);
+        if (fadeCanvasGroup != null) fadeCanvasGroup.blocksRaycasts = false;
     }
 
-    // --- NOVA FUNÇÃO PARA A CUTSCENE ---
-    public void LoadSceneFromCutscene(string sceneName)
+    // ==========================================
+    // SISTEMA DE CARREGAR NOVA FASE (LEVEL) COM VÍDEO
+    // ==========================================
+    public void LoadSceneWithVideo(VideoClip enterClip, string sceneName)
     {
-        StartCoroutine(LoadFromCutsceneRoutine(sceneName));
+        StartCoroutine(LoadSceneVideoRoutine(enterClip, sceneName));
     }
 
+    private IEnumerator LoadSceneVideoRoutine(VideoClip enterClip, string sceneName)
+    {
+        if (fadeCanvasGroup != null) fadeCanvasGroup.blocksRaycasts = true;
+        if (videoRawImage != null) videoRawImage.gameObject.SetActive(true);
+
+        // 1. Toca a transição
+        if (enterClip != null && videoPlayer != null)
+        {
+            videoPlayer.clip = enterClip;
+            videoPlayer.Play();
+            yield return new WaitForSeconds((float)enterClip.length);
+        }
+
+        // 2. Carrega a cena assincronamente por trás do vídeo
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+        while (!operation.isDone) yield return null;
+
+        // 3. Assim que carregar, esconde o vídeo e usa o fade suave normal
+        if (videoRawImage != null) videoRawImage.gameObject.SetActive(false);
+        yield return StartCoroutine(Fade(0f));
+    }
+
+    // ==========================================
+    // MÉTODOS ORIGINAIS MANTIDOS
+    // ==========================================
+    public void FadeAndLoadScene(string sceneName) { StartCoroutine(FadeRoutine(sceneName)); }
+    public void EnsureVisible() { fadeCanvasGroup.alpha = 0f; fadeCanvasGroup.blocksRaycasts = false; }
+    public void SetToBlack() { if (fadeCanvasGroup != null) { fadeCanvasGroup.alpha = 1f; fadeCanvasGroup.blocksRaycasts = true; } }
+    public void LoadSceneFromCutscene(string sceneName) { StartCoroutine(LoadFromCutsceneRoutine(sceneName)); }
+    
     private IEnumerator LoadFromCutsceneRoutine(string sceneName)
     {
-        // 1. Deixa a tela do SceneFader preta instantaneamente
         SetToBlack();
-
-        // 2. Carrega a cena assincronamente a partir DESTE script (que não é destruído)
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
         while (!operation.isDone) yield return null;
-
-        // 3. Quando a cena carregar, clareia a tela suavemente!
         yield return StartCoroutine(Fade(0f));
     }
-
+    
     private IEnumerator FadeRoutine(string sceneName)
     {
-        // 1. Fade In (Tela fica preta)
         yield return StartCoroutine(Fade(1f));
-
-        // 2. Carrega a cena enquanto a tela está preta
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
         while (!operation.isDone) yield return null;
-
-        // 3. Fade Out (Tela volta ao normal)
         yield return StartCoroutine(Fade(0f));
     }
 
-    // CORREÇÃO: Mudado para PUBLIC para que a Cutscene também possa usar este motor de Fade!
     public IEnumerator Fade(float targetAlpha)
     {
-        // Se vamos ficar pretos (Fade In), começamos a bloquear cliques IMEDIATAMENTE
         if (targetAlpha > 0) fadeCanvasGroup.blocksRaycasts = true;
-
         float startAlpha = fadeCanvasGroup.alpha;
         float timer = 0;
-
         while (timer < fadeDuration)
         {
             timer += Time.deltaTime;
             fadeCanvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, timer / fadeDuration);
             yield return null;
         }
-
         fadeCanvasGroup.alpha = targetAlpha;
-
-        // Se terminamos o Fade Out (Alpha = 0), paramos de bloquear cliques
         if (targetAlpha <= 0) fadeCanvasGroup.blocksRaycasts = false;
     }
 }

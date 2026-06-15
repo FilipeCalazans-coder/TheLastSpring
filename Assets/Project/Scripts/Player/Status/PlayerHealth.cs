@@ -11,16 +11,29 @@ public class PlayerHealth : MonoBehaviour
     [Header("UI")]
     [SerializeField] private Slider healthBar;
 
+    [Header("Configurações do Efeito de Pisco")]
+    [SerializeField] private float tempoDePisco = 0.08f;   // Tempo de cada piscada (ligado/desligado)
+    [SerializeField] private int quantidadeDePiscos = 3;  // Quantas vezes ela vai piscar ao tomar dano
+
+    [Header("Transição de Morte (Vídeos)")]
+    public UnityEngine.Video.VideoClip deathEnterClip; // Vídeo de entrada (ex: tela fechando em vermelho)
+    public UnityEngine.Video.VideoClip deathExitClip;  // Vídeo de saída (ex: tela abrindo na fogueira)
+
     private float _currentHealth;
     private BaseStats _stats;
-    public bool isInvulnerable { get; set; }
-    
-    // CORREÇÃO: Variável de controle para evitar que Die() seja chamado múltiplas vezes
     private bool _isDead = false; 
+
+    // VARIÁVEIS NOVAS: Para controlar o visual do pisco da Fiorella
+    private SpriteRenderer _mySpriteRenderer; 
+    private Coroutine _piscoCoroutine;        
+
+    public bool isInvulnerable { get; set; }
 
     private void Awake()
     {
         _stats = GetComponent<BaseStats>();
+        // Captura o componente de imagem (SpriteRenderer) da Fiorella
+        _mySpriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Start()
@@ -40,9 +53,9 @@ public class PlayerHealth : MonoBehaviour
         UpdateUI();
     }
 
-    public void TakeDamage(int damage)
+    // CORREÇÃO AQUI: Agora a função aceita o dano E uma cor opcional (blinkColor)
+    public void TakeDamage(int damage, Color? blinkColor = null)
     {
-        // Se já estiver morta, ignora novos danos
         if (_isDead) return;
 
         if (isInvulnerable) 
@@ -61,7 +74,47 @@ public class PlayerHealth : MonoBehaviour
 
         UpdateUI();
 
+        // ==========================================
+        // 1. NOVO: TREMOR DE CÂMERA AO TOMAR DANO
+        // ==========================================
+        if (CameraShake.Instance != null && _currentHealth > 0)
+        {
+            CameraShake.Instance.Shake(0.2f, 0.35f); // Duração: 0.2s | Força: 0.35f
+        }
+
+        // ==========================================
+        // 2. NOVO: EFEITO VISUAL DE PISCO COLORIDO
+        // ==========================================
+        if (_currentHealth > 0)
+        {
+            // Se nenhuma cor for enviada, usamos vermelho padrão por segurança
+            Color corFinal = blinkColor ?? Color.red;
+
+            // Se já estava piscando antes, para a antiga e começa uma nova limpa
+            if (_piscoCoroutine != null) StopCoroutine(_piscoCoroutine);
+            _piscoCoroutine = StartCoroutine(BlinkRoutine(corFinal));
+        }
+
         if (_currentHealth <= 0) Die();
+    }
+
+    // ROTINA DO PISCO: Alterna as cores no tempo correto
+    private IEnumerator BlinkRoutine(Color corDoInimigo)
+    {
+        if (_mySpriteRenderer == null) yield break;
+
+        Color corOriginal = Color.white; // Branco na Unity redefine o sprite para a cor padrão dele
+
+        for (int i = 0; i < quantidadeDePiscos; i++)
+        {
+            _mySpriteRenderer.color = corDoInimigo; // Fica com a cor da resina/inimigo
+            yield return new WaitForSeconds(tempoDePisco);
+
+            _mySpriteRenderer.color = corOriginal;  // Volta ao normal
+            yield return new WaitForSeconds(tempoDePisco);
+        }
+
+        _piscoCoroutine = null; 
     }
 
     private void UpdateUI()
@@ -75,12 +128,13 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
-        _isDead = true; // Trava o estado de morte
+        _isDead = true; 
         
-        // 1. Drop das almas (Pólen) no local da morte
-        GetComponent<PlayerProgression>().DropSoulsOnDeath();
+        // Para o pisco imediatamente se ela morrer para não bugar a animação de morte
+        if (_piscoCoroutine != null) StopCoroutine(_piscoCoroutine);
+        if (_mySpriteRenderer != null) _mySpriteRenderer.color = Color.white;
 
-        // 2. Inicia o processo de animação e espera antes do Respawn
+        GetComponent<PlayerProgression>().DropSoulsOnDeath();
         StartCoroutine(DeathSequenceRoutine());
     }
 
@@ -88,39 +142,53 @@ public class PlayerHealth : MonoBehaviour
     {
         Debug.Log("Fiorella Iniciou a animação de morte...");
 
-        // 3. Desativa os controles e física da Fiorella para ela não andar morta
         PlayerController playerController = GetComponent<PlayerController>();
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        Animator animator = GetComponent<Animator>();
-
-        if (playerController != null) playerController.enabled = false;
-        if (rb != null) rb.linearVelocity = Vector2.zero; // Faz ela parar imediatamente no chão
         
-        // 4. Toca o gatilho de animação de morte no seu Animator (Crie um Trigger chamado "Die" lá)
+        // Bloqueia os controles e para o movimento imediatamente
+        if (playerController != null) playerController.enabled = false;
+        if (rb != null) rb.linearVelocity = Vector2.zero; 
        
-        // 5. TEMPO DE ESPERA (ex: 2.5 segundos para o jogador ver a Fiorella caída)
-        yield return new WaitForSeconds(2.5f);
+        // Tempo para a animação da Fiorella caindo no chão tocar (ajuste se precisar)
+        yield return new WaitForSeconds(2.0f);
 
-        // 6. Opcional: Chamar o fade de tela preta aqui se tiver (SceneFader)
-        // Ex: if (SceneFader.Instance != null) yield return SceneFader.Instance.FadeIn();
-
-        // 7. Agora sim, faz o teleporte para o checkpoint
-        if (BonfireManager.Instance != null)
+        // ==========================================
+        // NOVO: Chama o SceneFader para a Morte!
+        // ==========================================
+        if (SceneFader.Instance != null && deathEnterClip != null)
         {
-            BonfireManager.Instance.RespawnPlayerAtLastBonfire();
+            SceneFader.Instance.PlayVideoTransition(deathEnterClip, deathExitClip, () => 
+            {
+                // TUDO AQUI DENTRO RODA NO "PONTO CEGO" (Quando a tela estiver coberta pelo vídeo)
+                
+                if (BonfireManager.Instance != null)
+                {
+                    BonfireManager.Instance.RespawnPlayerAtLastBonfire();
+                }
+                else
+                {
+                    transform.position = Vector3.zero; 
+                }
+
+                _currentHealth = GetMaxHealth();
+                UpdateUI();
+                
+                if (playerController != null) playerController.enabled = true;
+                _isDead = false; 
+            });
         }
         else
         {
-            // Fallback de segurança se o Manager não existir
-            transform.position = Vector3.zero; 
-        }
+            // Sistema de Segurança (Fallback): Se você esquecer de colocar o vídeo ou o Fader
+            if (BonfireManager.Instance != null) BonfireManager.Instance.RespawnPlayerAtLastBonfire();
+            else transform.position = Vector3.zero;
 
-        // 8. Restaura a vida e reativa os controles após o teleporte concluir
-        _currentHealth = GetMaxHealth();
-        UpdateUI();
-        
-        if (playerController != null) playerController.enabled = true;
-        _isDead = false; // Permite que ela possa morrer novamente no futuro
+            _currentHealth = GetMaxHealth();
+            UpdateUI();
+            
+            if (playerController != null) playerController.enabled = true;
+            _isDead = false; 
+        }
     }
 
     public void SetHealthBar(Slider bar)

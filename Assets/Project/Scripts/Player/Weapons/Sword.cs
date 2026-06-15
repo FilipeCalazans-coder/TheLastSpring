@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.Rendering;
 
 public class Sword : MonoBehaviour
 {
@@ -12,7 +10,6 @@ public class Sword : MonoBehaviour
 
     private PlayerControls playerControls;
     private Animator myAnimator;
-    private Sword sword;
     private PlayerController playerController;
     private ActiveWeapon activeWeapon;
     private GameObject slashAnim;
@@ -22,9 +19,7 @@ public class Sword : MonoBehaviour
     {
         playerController = GetComponentInParent<PlayerController>();
         activeWeapon = GetComponentInParent<ActiveWeapon>();
-        Animator animator = GetComponent<Animator>();
-        myAnimator = animator;
-        sword = GetComponentInChildren<Sword>();
+        myAnimator = GetComponent<Animator>();
         playerControls = new PlayerControls();
     }
 
@@ -41,7 +36,8 @@ public class Sword : MonoBehaviour
 
     private void Update()
     {
-        MouseFollowWithOffset();
+        // NOVO: Agora a arma se sincroniza com a Fiorella em vez do Mouse!
+        SyncWeaponDirection();
         Attack();
     }
 
@@ -57,27 +53,27 @@ public class Sword : MonoBehaviour
 
     private void Attack()
     {
-        // Verificamos se o botão está apertado E se não estamos no meio de um cooldown
+        // ==========================================
+        // CORREÇÃO: Impede a espadada e o gasto de estamina no pause
+        // ==========================================
+        if (Time.timeScale == 0f) return;
+
         if (attackButtonDown && !isAttacking)
         {
-            // Buscamos a estamina no pai (Player)
             PlayerStamina stamina = GetComponentInParent<PlayerStamina>();
 
-            // TENTAMOS gastar estamina. Se retornar 'true', o ataque acontece.
             if (stamina != null && stamina.TrySpendStamina(15f))
             {
                 isAttacking = true;
                 myAnimator.SetTrigger("Attack");
                 weaponCollider.gameObject.SetActive(true);
                 
+                // Cria o efeito de corte
                 slashAnim = Instantiate(slashAnimPrefab, slashAnimSpawnPoint.position, Quaternion.identity);
-                slashAnim.transform.parent = this.transform.parent;
+                // Coloca o efeito DENTRO do objeto ActiveWeapon para herdar a rotação dele
+                slashAnim.transform.parent = this.transform.parent; 
                 
                 StartCoroutine(AttackCDRoutine());
-            }
-            else if (stamina == null)
-            {
-                Debug.LogWarning("PlayerStamina não encontrado no Player!");
             }
         }
     }
@@ -93,44 +89,43 @@ public class Sword : MonoBehaviour
         weaponCollider.gameObject.SetActive(false);
     }
 
-
+    // ==========================================
+    // ANIMAÇÕES DE CORTE LOCALIZADAS
+    // ==========================================
     public void SwingUpFlipAnimEvent()
     {
-        slashAnim.gameObject.transform.rotation = Quaternion.Euler(-180, 0, 0);
-
-        if(playerController.FacingLeft)
+        if (slashAnim != null)
         {
-            slashAnim.GetComponent<SpriteRenderer>().flipX = true;
+            // Gira o efeito no próprio eixo para dar a sensação de combo
+            slashAnim.transform.localRotation = Quaternion.Euler(-180, 0, 0);
         }
     }
 
     public void SwingDownFlipAnimEvent()
     {
-        slashAnim.gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
-
-        if(playerController.FacingLeft)
+        if (slashAnim != null)
         {
-            slashAnim.GetComponent<SpriteRenderer>().flipX = true;
+            slashAnim.transform.localRotation = Quaternion.Euler(0, 0, 0);
         }
     }
 
-
-    private void MouseFollowWithOffset()
+    // ==========================================
+    // NOVO: SINCRONIZAÇÃO COM O PLAYER (TECLADO)
+    // ==========================================
+    private void SyncWeaponDirection()
     {
-    Vector3 mousePos = Input.mousePosition;
-    Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(playerController.transform.position);
-
-    float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
-
-    if (mousePos.x < playerScreenPoint.x)
-    {
-        activeWeapon.transform.rotation = Quaternion.Euler(0, -180, angle);
-        weaponCollider.transform.rotation = Quaternion.Euler(0, -180, 0);
-    }
-    else
-    {
-        activeWeapon.transform.rotation = Quaternion.Euler(0, 0, angle);
-        weaponCollider.transform.rotation = Quaternion.Euler(0, 0, 0);
-    }
+        // Verifica a variável FacingLeft que já existe no seu PlayerController
+        if (playerController.FacingLeft)
+        {
+            // Vira todo o sistema da arma para a esquerda
+            activeWeapon.transform.localRotation = Quaternion.Euler(0, -180, 0);
+            weaponCollider.transform.localRotation = Quaternion.Euler(0, -180, 0);
+        }
+        else
+        {
+            // Vira todo o sistema da arma para a direita
+            activeWeapon.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            weaponCollider.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        }
     }
 }

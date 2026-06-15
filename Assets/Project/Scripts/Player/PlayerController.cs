@@ -12,7 +12,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float baseMoveSpeed = 1f;
     [SerializeField] private float dashSpeedMultiplier = 4f;
     [SerializeField] private TrailRenderer myTrailRenderer;
-
+    
+    // ==========================================
+    // NOVO: Efeito Visual em Sprite para o Dash
+    // ==========================================
+    [SerializeField] private GameObject dashVFXPrefab;
+    
     [Header("Habilidades Especiais")]
     [SerializeField] private GameObject landminePrefab; // O objeto da mina que vamos atirar
     [SerializeField] private float skillCooldown = 2f;  // Tempo de espera entre cada mina
@@ -25,10 +30,14 @@ public class PlayerController : MonoBehaviour
     private float _lastSkill2Time;
 
     [Header("Skill 3: Afastamento (Explosão de Vento)")]
-    [SerializeField] private float afastamentoRadius = 2.5f; // Tamanho da área da explosão
-    [SerializeField] private float afastamentoForce = 20f;   // A força com que os inimigos são atirados para trás
-    [SerializeField] private int afastamentoDamage = 10;     // Um bocadinho de dano opcional
-    [SerializeField] private float skill3Cooldown = 4f;      // Tempo de espera
+    [SerializeField] private float afastamentoRadius = 2.5f; 
+    [SerializeField] private float afastamentoForce = 20f;   
+    [SerializeField] private int afastamentoDamage = 10;     
+    [SerializeField] private float skill3Cooldown = 4f;      
+    // ==========================================
+    // NOVO: A variável que vai guardar o Prefab da animação
+    // ==========================================
+    [SerializeField] private GameObject afastamentoVFXPrefab; 
     private float _lastSkill3Time;
 
     [Header("Skill 4: Teleporte (Muda de Raiz)")]
@@ -66,6 +75,9 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         _currentSpeed = baseMoveSpeed;
+
+        // Garante que a Fiorella não inicie o jogo em estado de dash
+        isDashing = false;
     }
 
     private void OnEnable()
@@ -91,6 +103,19 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerInput()
     {
+        // ==========================================
+        // CORREÇÃO: Bloqueia ações se o menu estiver aberto (jogo pausado)
+        // ==========================================
+        if (Time.timeScale == 0f)
+        {
+            // Força o movimento a ser zero para o Animator não bugar
+            movement = Vector2.zero;
+            myAnimator.SetFloat("moveX", 0);
+            myAnimator.SetFloat("moveY", 0);
+            return; // Sai da função ignorando todos os botões abaixo!
+        }
+
+        // --- O RESTO CONTINUA IGUAL ---
         movement = playerControls.Movement.Move.ReadValue<Vector2>();
 
         myAnimator.SetFloat("moveX", movement.x);
@@ -101,7 +126,6 @@ public class PlayerController : MonoBehaviour
             Dash();
         }
 
-        // Lê a tecla Z
         if (playerControls.Combat.Skill1.triggered)
         {
             CastSkill1();
@@ -226,6 +250,15 @@ public class PlayerController : MonoBehaviour
         PlayerSkills skills = GetComponent<PlayerSkills>();
         if (skills != null && skills.HasSkillByID("afastamento"))
         {
+            // ==========================================
+            // NOVO: Faz a animação da explosão de vento aparecer na tela!
+            // ==========================================
+            if (afastamentoVFXPrefab != null)
+            {
+                // Cria o efeito visual na exata posição da Fiorella
+                Instantiate(afastamentoVFXPrefab, transform.position, Quaternion.identity);
+            }
+
             // 3. Cria o círculo de explosão em volta da Fiorella
             Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, afastamentoRadius);
             
@@ -255,7 +288,7 @@ public class PlayerController : MonoBehaviour
             }
 
             _lastSkill3Time = Time.time;
-            Debug.Log("<color=cyan>Habilidade 3: Afastamento ativado!</color>");
+            Debug.Log("<color=cyan>Habilidade 3: Afastamento ativado com VFX!</color>");
         }
     }
 
@@ -339,21 +372,19 @@ public class PlayerController : MonoBehaviour
 
     private void AdjustPlayerFacingDirection()
     {
-        if (_mainCamera == null) return; // Evita erros se a câmera sumir
-
-        Vector3 mousePos = Input.mousePosition;
-        Vector3 playerScreenPos = _mainCamera.WorldToScreenPoint(transform.position);
-        
-        if (mousePos.x < playerScreenPos.x)
+        // Se a Fiorella estiver se movendo para a esquerda (tecla A ou analógico pra esquerda)
+        if (movement.x < 0)
         {
             mySpriteRenderer.flipX = true;
             facingLeft = true;
         }
-        else
+        // Se a Fiorella estiver se movendo para a direita (tecla D ou analógico pra direita)
+        else if (movement.x > 0)
         {
             mySpriteRenderer.flipX = false;
             facingLeft = false;
         }
+        // Nota: Se movement.x for exatamente 0 (parada), ela apenas mantém a direção atual.
     }
 
     // --- SISTEMA DE DASH ---
@@ -380,13 +411,32 @@ public class PlayerController : MonoBehaviour
         
         mySpriteRenderer.color = new Color(1f, 1f, 1f, 0.5f); 
 
+        // ==========================================
+        // NOVO: Criando o Efeito Visual do Dash
+        // ==========================================
+        if (dashVFXPrefab != null)
+        {
+            // Cria o efeito na posição atual da Fiorella
+            GameObject vfx = Instantiate(dashVFXPrefab, transform.position, Quaternion.identity);
+            
+            // Tenta espelhar o efeito para o lado correto
+            SpriteRenderer vfxSprite = vfx.GetComponent<SpriteRenderer>();
+            if (vfxSprite != null)
+            {
+                // Se a Fiorella está virada para a esquerda, vira o efeito também
+                vfxSprite.flipX = mySpriteRenderer.flipX; 
+            }
+        }
+
         _currentSpeed = baseMoveSpeed * dashSpeedMultiplier;
-        myTrailRenderer.emitting = true;
+        
+        // Se ainda quiser usar o rastro antigo, ele continua funcionando
+        if (myTrailRenderer != null) myTrailRenderer.emitting = true;
 
         yield return new WaitForSeconds(0.1f); 
         
         _currentSpeed = baseMoveSpeed;
-        myTrailRenderer.emitting = false;
+        if (myTrailRenderer != null) myTrailRenderer.emitting = false;
 
         if (health != null) health.isInvulnerable = false;
         yield return new WaitForSeconds(0.05f); 

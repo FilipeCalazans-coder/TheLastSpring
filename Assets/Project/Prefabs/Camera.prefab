@@ -80,6 +80,10 @@ MonoBehaviour:
     HashOfParent: 756556552
   - Hash: -2010423537
     HashOfParent: 756556552
+  - Hash: 1236676980
+    HashOfParent: 756556552
+  - Hash: -513393822
+    HashOfParent: 756556552
   m_LegacyLookAt: {fileID: 0}
   m_LegacyFollow: {fileID: 0}
 --- !u!1 &2558754616545530186
@@ -144,7 +148,7 @@ Transform:
   m_GameObject: {fileID: 4041832630920255761}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.50263, y: 0.44506, z: 0}
+  m_LocalPosition: {x: -9.37037, y: 21.91767, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -328,6 +332,7 @@ GameObject:
   - component: {fileID: 935997295035447832}
   - component: {fileID: 8294781863368250667}
   - component: {fileID: 5896758542760631870}
+  - component: {fileID: 140720375869965647}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -344,7 +349,7 @@ Transform:
   m_GameObject: {fileID: 8830252757277957635}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.50263, y: 0.44506, z: 0}
+  m_LocalPosition: {x: -9.37037, y: 21.91767, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -485,3 +490,15 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
+--- !u!114 &140720375869965647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8830252757277957635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 233b0f506a043f94db942c45dee56683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraShake

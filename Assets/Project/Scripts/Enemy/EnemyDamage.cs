@@ -4,8 +4,12 @@ using UnityEngine;
 public class EnemyDamage : MonoBehaviour
 {
     [SerializeField] private int damageAmount = 10;
-    [Tooltip("Layer do corpo do Player. Outros colliders (Weapon, Feet) s„o ignorados.")]
+    [Tooltip("Layer do corpo do Player. Outros colliders (Weapon, Feet) s√£o ignorados.")]
     [SerializeField] private string playerLayerName = "Player";
+
+    [Header("Efeito Visual de Dano Customizado")]
+    [Tooltip("A cor com que a Fiorella vai piscar ao tomar dano deste inimigo espec√≠fico.")]
+    [SerializeField] private Color damageBlinkColor = Color.red; // Configure a cor da resina no Inspector!
 
     private int _playerLayerCached = -1;
 
@@ -16,13 +20,13 @@ public class EnemyDamage : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // SÛ aceita colliders que est„o na layer "Player" (corpo principal)
-        // Ignora WeaponCollider, FeetCollider e outros filhos com layers prÛprias
+        // S√≥ aceita colliders que est√£o na layer "Player" (corpo principal)
         if (other.gameObject.layer != _playerLayerCached) return;
 
         var health = other.transform.root.GetComponent<PlayerHealth>();
         if (health == null) return;
 
-        health.TakeDamage(damageAmount);
+        // NOVO: Passamos a quantidade de dano E a cor que queremos que a Fiorella pisque!
+        health.TakeDamage(damageAmount, damageBlinkColor);
     }
 }

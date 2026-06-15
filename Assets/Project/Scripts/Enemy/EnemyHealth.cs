@@ -39,7 +39,6 @@ public class EnemyHealth : MonoBehaviour
     private void Start()
     {
         currentHealth = startingHealth;
-
         // 1. Grava a posição exata do monstro no mapa
         _initialPosition = transform.position;
 
@@ -76,6 +75,25 @@ public class EnemyHealth : MonoBehaviour
         
         if(knockBack) knockBack.GetKnockedBack(PlayerController.Instance.transform, knockBackThrust);
         if(flash) StartCoroutine(flash.FlashRoutine());
+
+        // ==========================================
+        // CORREÇÃO: TREMOR DE CÂMERA AO CAUSAR DANO
+        // ==========================================
+        if (CameraShake.Instance != null)
+        {
+            // O sistema agora avalia a consequência do golpe:
+            if (currentHealth <= 0)
+            {
+                // Golpe Fatal: Tremor mais forte e um pouco mais demorado
+                CameraShake.Instance.Shake(0.15f, 0.20f); 
+            }
+            else
+            {
+                // Golpe Normal: Tremor rápido e leve
+                CameraShake.Instance.Shake(0.1f, 0.12f);  
+            }
+        }
+
         StartCoroutine(CheckDetectDeathRoutine());
     }
 
@@ -119,7 +137,7 @@ public class EnemyHealth : MonoBehaviour
     {
         // 1. Move o monstro de volta para onde ele nasceu
         transform.position = _initialPosition;
-
+        
         // 2. Restaura os status vitais
         currentHealth = startingHealth;
         _hasDroppedSouls = false;

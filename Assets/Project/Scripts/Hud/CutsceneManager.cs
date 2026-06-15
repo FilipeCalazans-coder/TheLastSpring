@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem; // NOVO: Necessário para ler a tecla E
 
 namespace Project.Scripts.UI
 {
@@ -18,24 +19,51 @@ namespace Project.Scripts.UI
         [Header("Referências")]
         [Tooltip("A imagem da UI que vai mostrar a cutscene.")]
         [SerializeField] private Image displayImage;
-        [Tooltip("O painel preto de fundo da cutscene (será escondido antes de carregar a cena).")]
+        [Tooltip("O painel preto de fundo da cutscene.")]
         [SerializeField] private GameObject cutscenePanel;
         [Tooltip("O nome da cena que deve carregar depois da cutscene.")]
         [SerializeField] private string nextSceneName = "Ruins_Ancestrals";
 
         private Coroutine _cutsceneRoutine;
+        private PlayerControls _playerControls; // Variável para ler os controlos
+        private bool _isSkipping = false; // Impede que o jogador clique várias vezes seguidas
+
+        private void Awake()
+        {
+            // Cria o sistema de controlos quando a cutscene nasce
+            _playerControls = new PlayerControls();
+        }
 
         private void OnEnable()
         {
+            // Liga os ouvidos para a tecla "E" (Interact)
+            _playerControls.Menu.Interact.performed += OnInteractPressed;
+            _playerControls.Enable();
+
             _cutsceneRoutine = StartCoroutine(BeginCutscene());
         }
 
         private void OnDisable()
         {
+            // Desliga os ouvidos quando a cutscene acabar para não dar erros
+            _playerControls.Menu.Interact.performed -= OnInteractPressed;
+            _playerControls.Disable();
+
             if (_cutsceneRoutine != null)
             {
                 StopCoroutine(_cutsceneRoutine);
                 _cutsceneRoutine = null;
+            }
+        }
+
+        // NOVO: Função que é chamada exatemente quando a tecla "E" é pressionada
+        private void OnInteractPressed(InputAction.CallbackContext context)
+        {
+            // Se o botão foi apertado e ainda não estamos a pular a cutscene
+            if (context.performed && !_isSkipping)
+            {
+                Debug.Log("<color=yellow>Jogador pulou a cutscene!</color>");
+                SkipCutscene();
             }
         }
 
@@ -66,6 +94,8 @@ namespace Project.Scripts.UI
             {
                 displayImage.sprite = cutsceneImages[i];
                 yield return StartCoroutine(FadeImage(0f, 1f));
+                
+                // Espera o tempo, a menos que o jogador aperte para pular
                 yield return new WaitForSeconds(timePerImage);
 
                 if (i < cutsceneImages.Length - 1)
@@ -102,58 +132,32 @@ namespace Project.Scripts.UI
 
         private IEnumerator LoadNextScene()
         {
-            if (string.IsNullOrWhiteSpace(nextSceneName))
-            {
-                Debug.LogError("[CutsceneManager] nextSceneName está vazio. Configure no Inspector.");
-                yield break;
-            }
+            if (string.IsNullOrWhiteSpace(nextSceneName)) yield break;
 
-            if (!IsSceneInBuildSettings(nextSceneName))
-            {
-                Debug.LogError(
-                    $"[CutsceneManager] A cena '{nextSceneName}' não está em File → Build Settings. " +
-                    "Adicione a cena e faça um novo build.");
-                yield break;
-            }
+            if (cutscenePanel != null) cutscenePanel.SetActive(false);
 
-            // Esconde o painel preto de trás da cutscene, 
-            // pois o SceneFader vai assumir a tela preta da frente.
-            if (cutscenePanel != null)
-                cutscenePanel.SetActive(false);
-
-            Debug.Log($"[CutsceneManager] Passando o controle de transição para o SceneFader...");
-
-            // CORREÇÃO DEFINITIVA: Passamos o bastão para o SceneFader. 
-            // Como ele NÃO é destruído, a coroutine vai até ao fim em segurança!
             if (SceneFader.Instance != null)
             {
                 SceneFader.Instance.LoadSceneFromCutscene(nextSceneName);
             }
             else
             {
-                // Caso falhe de alguma forma, usamos o método base da Unity
                 SceneManager.LoadScene(nextSceneName);
             }
 
             yield break;
         }
 
-        private static bool IsSceneInBuildSettings(string sceneName)
-        {
-            for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
-            {
-                string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
-                string sceneNameFromPath = System.IO.Path.GetFileNameWithoutExtension(scenePath);
-                if (sceneNameFromPath == sceneName)
-                    return true;
-            }
-
-            return false;
-        }
-
         public void SkipCutscene()
         {
+            // Trava de segurança para não rodar duas vezes
+            if (_isSkipping) return;
+            _isSkipping = true;
+
+            // Para todas as animações e imagens que estão a rodar no momento
             StopAllCoroutines();
+
+            // Pula direto para o carregamento da próxima fase
             StartCoroutine(LoadNextScene());
         }
     }
