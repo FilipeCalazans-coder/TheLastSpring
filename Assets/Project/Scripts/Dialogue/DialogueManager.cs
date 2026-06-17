@@ -2,21 +2,25 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System; 
 
 namespace Project.Scripts.Dialogue
 {
     public class DialogueManager : MonoBehaviour
     {
-        public static DialogueManager Instance; // Padrão Singleton para fácil acesso
+        public static DialogueManager Instance; 
+
+        // O Evento Global que avisa os outros scripts
+        public static event Action<string> OnDialogueAction;
 
         [Header("Referências da UI")]
-        public GameObject dialoguePanel; // O painel inteiro do diálogo
-        public TextMeshProUGUI nameText; // Texto do nome do NPC
-        public TextMeshProUGUI dialogueText; // Texto da fala
+        public GameObject dialoguePanel; 
+        public TextMeshProUGUI nameText; 
+        public TextMeshProUGUI dialogueText; 
         
         [Header("Opções de Resposta")]
-        public Transform optionsParent; // Onde os botões vão aparecer (Um layout group)
-        public GameObject optionButtonPrefab; // O molde do botão de resposta
+        public Transform optionsParent; 
+        public GameObject optionButtonPrefab; 
 
         private DialogueData _currentDialogue;
         private int _currentLineIndex = 0;
@@ -30,28 +34,33 @@ namespace Project.Scripts.Dialogue
 
         public void StartDialogue(DialogueData dialogue)
         {
+            // [CORREÇÃO 1] Pára qualquer texto "fantasma" que ainda esteja a ser escrito!
+            StopAllCoroutines();
+            _isTyping = false;
+
             _currentDialogue = dialogue;
             _currentLineIndex = 0;
             dialoguePanel.SetActive(true);
             
-            // Limpa botões antigos se houver
-            foreach (Transform child in optionsParent) Destroy(child.gameObject);
+            // Limpa os botões antigos de forma segura
+            foreach (Transform child in optionsParent) 
+            {
+                Destroy(child.gameObject);
+            }
             
             StartCoroutine(TypeLine());
         }
 
-        // Efeito de máquina de escrever
         private IEnumerator TypeLine()
         {
             _isTyping = true;
             dialogueText.text = "";
             nameText.text = _currentDialogue.npcName;
 
-            // Digita letra por letra
             foreach (char c in _currentDialogue.npcLines[_currentLineIndex].ToCharArray())
             {
                 dialogueText.text += c;
-                yield return new WaitForSeconds(0.02f); // Velocidade da digitação
+                yield return new WaitForSeconds(0.02f); 
             }
             
             _isTyping = false;
@@ -62,18 +71,16 @@ namespace Project.Scripts.Dialogue
         {
             if (!dialoguePanel.activeSelf) return;
 
-            // Clique do mouse ou Espaço avança o diálogo
             if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
             {
                 if (_isTyping)
                 {
-                    // Se clicar enquanto digita, preenche a frase toda de uma vez
                     StopAllCoroutines();
                     dialogueText.text = _currentDialogue.npcLines[_currentLineIndex];
                     _isTyping = false;
                     CheckShowOptions();
                 }
-                else if (optionsParent.childCount == 0) // Só avança se NÃO houver botões na tela
+                else if (optionsParent.childCount == 0) 
                 {
                     NextLine();
                 }
@@ -95,7 +102,6 @@ namespace Project.Scripts.Dialogue
 
         private void CheckShowOptions()
         {
-            // Se for a última fala e existirem opções configuradas, cria os botões
             if (_currentLineIndex == _currentDialogue.npcLines.Length - 1 && _currentDialogue.options.Length > 0)
             {
                 foreach (var option in _currentDialogue.options)
@@ -103,7 +109,6 @@ namespace Project.Scripts.Dialogue
                     GameObject btnObj = Instantiate(optionButtonPrefab, optionsParent);
                     btnObj.GetComponentInChildren<TextMeshProUGUI>().text = option.playerChoiceText;
                     
-                    // Adiciona o evento de clique via código
                     btnObj.GetComponent<Button>().onClick.AddListener(() => OnOptionSelected(option));
                 }
             }
@@ -111,20 +116,34 @@ namespace Project.Scripts.Dialogue
 
         private void OnOptionSelected(DialogueOption option)
         {
+            // [CORREÇÃO 2] Fecha ou avança a janela PRIMEIRO.
             if (option.nextDialogue != null)
             {
-                StartDialogue(option.nextDialogue); // Vai para o próximo nó
+                StartDialogue(option.nextDialogue); 
             }
             else
             {
-                EndDialogue(); // Se o nó estiver vazio, fecha a conversa
+                EndDialogue(); 
+            }
+
+            // [CORREÇÃO 2] E só DEPOIS dispara o evento. Se o evento abrir um novo diálogo, não haverá conflitos!
+            if (!string.IsNullOrEmpty(option.actionName))
+            {
+                OnDialogueAction?.Invoke(option.actionName);
             }
         }
 
         public void EndDialogue()
         {
+            // [CORREÇÃO 1] Garante que a máquina de escrever se desliga ao afastar-se do NPC
+            StopAllCoroutines();
+            _isTyping = false;
+
             dialoguePanel.SetActive(false);
-            foreach (Transform child in optionsParent) Destroy(child.gameObject);
+            foreach (Transform child in optionsParent) 
+            {
+                Destroy(child.gameObject);
+            }
         }
     }
 }

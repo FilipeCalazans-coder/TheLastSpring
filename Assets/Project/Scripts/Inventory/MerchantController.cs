@@ -5,24 +5,30 @@ namespace Project.Scripts.Inventory
 {
     public class MerchantController : MonoBehaviour
     {
+        // ==========================================
+        // [NOVO] TRAVA DO SISTEMA DE DIÁLOGO
+        // ==========================================
+        [Header("Integração de Sistemas")]
+        [Tooltip("Marque como TRUE se este NPC usa o Sistema de Diálogos para abrir a loja. Isso impede que a loja abra automaticamente ao apertar 'E'.")]
+        public bool dependeDeDialogo = false; 
+
         [Header("Configurações do Mercador")]
         public List<ItemData> itemsForSale = new List<ItemData>();
         
         [Header("Configurações de UI")]
-        public GameObject merchantMainPanel; 
-        public GameObject buyPanel;         
-        public Transform buyListParent;      
-        public GameObject buySlotPrefab;     
-
+        public GameObject merchantMainPanel;
+        public GameObject buyPanel;
+        
+        public Transform buyListParent;
+        public GameObject buySlotPrefab;
+        
         private bool _isPlayerNear = false;
         private InventoryUI _playerUI;
         
-        // NOVA VARIÁVEL DO INPUT SYSTEM
         private PlayerControls _playerControls;
 
         private void Awake()
         {
-            // Inicializamos o sistema de controles
             _playerControls = new PlayerControls();
         }
 
@@ -45,7 +51,9 @@ namespace Project.Scripts.Inventory
 
         private void Update()
         {
-            // VERIFICAÇÃO COM O NOVO INPUT SYSTEM
+            // [SISTEMA DE DIREÇÃO/INPUT] Se o mercador for controlado por diálogo, ignora a leitura do botão "E" aqui!
+            if (dependeDeDialogo) return;
+
             if (_isPlayerNear && _playerControls.Menu.Interact.triggered)
             {
                 if (!merchantMainPanel.activeSelf)

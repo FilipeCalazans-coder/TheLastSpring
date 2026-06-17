@@ -13,6 +13,15 @@ public class EnemyHealth : MonoBehaviour
     [Header("Recompensa")]
     [SerializeField] private int polenDropped = 50; 
 
+    // [SISTEMA DE I-FRAMES] Tempo que o inimigo fica invulnerável após um hit
+    [Header("Invulnerabilidade (I-Frames)")]
+    [SerializeField] private float tempoInvulneravel = 0.2f;
+    private bool _estaInvulneravel = false;
+
+    // Adicione uma variável para o nome do boss no topo do seu script de vida:
+    public string nomeDoBoss = "O Invocador Raiz";
+    public bool isBoss = false; // Marque isso como TRUE no inspector do seu boss
+
     private EnemyHealthBar _healthBar;
     private int currentHealth;
     private KnockBack knockBack;
@@ -39,20 +48,27 @@ public class EnemyHealth : MonoBehaviour
     private void Start()
     {
         currentHealth = startingHealth;
-        // 1. Grava a posição exata do monstro no mapa
         _initialPosition = transform.position;
+        _estaInvulneravel = false; // Garante que começa vulnerável
 
-        // 2. REGISTRO AUTOMÁTICO: O monstro se apresenta ao cérebro da fogueira
         if (BonfireManager.Instance != null)
         {
             BonfireManager.Instance.RegisterEnemy(this);
         }
+
+        //if (isBoss && BossHealthBar.Instancia != null)
+        //{
+        //    BossHealthBar.Instancia.AtivarBarra(nomeDoBoss, startingHealth); 
+        //}
     }
 
     public void TakeDamage(int damage)
     {
-        // Se já estiver morto (desativado ou no frame de morte), ignora dano residual
+        // Se já estiver morto, ignora
         if (currentHealth <= 0) return;
+
+        // [SISTEMA DE I-FRAMES] Se estiver no período de invulnerabilidade, ignora os múltiplos hits!
+        if (_estaInvulneravel) return;
 
         float finalDamage = damage;
 
@@ -76,25 +92,52 @@ public class EnemyHealth : MonoBehaviour
         if(knockBack) knockBack.GetKnockedBack(PlayerController.Instance.transform, knockBackThrust);
         if(flash) StartCoroutine(flash.FlashRoutine());
 
-        // ==========================================
-        // CORREÇÃO: TREMOR DE CÂMERA AO CAUSAR DANO
-        // ==========================================
+        // Tremor de câmera
         if (CameraShake.Instance != null)
         {
-            // O sistema agora avalia a consequência do golpe:
             if (currentHealth <= 0)
             {
-                // Golpe Fatal: Tremor mais forte e um pouco mais demorado
                 CameraShake.Instance.Shake(0.15f, 0.20f); 
             }
             else
             {
-                // Golpe Normal: Tremor rápido e leve
                 CameraShake.Instance.Shake(0.1f, 0.12f);  
             }
         }
 
+        if (isBoss && BossHealthBar.Instancia != null)
+        {
+            BossHealthBar.Instancia.AtualizarVida(currentHealth);
+        }
+
+        // [SISTEMA DE I-FRAMES] Inicia o período de invulnerabilidade
+        StartCoroutine(RotinaInvulnerabilidade());
+
         StartCoroutine(CheckDetectDeathRoutine());
+    }
+
+    // ==========================================
+    // [NOVO] Chamado pelo Controlador do Boss quando ele acorda
+    // ==========================================
+    public void AtivarBarraBoss()
+    {
+        if (isBoss && BossHealthBar.Instancia != null)
+        {
+            BossHealthBar.Instancia.AtivarBarra(nomeDoBoss, startingHealth);
+        }
+    }
+
+    // ==========================================
+    // [SISTEMA DE I-FRAMES] ROTINA DE TRAVA
+    // ==========================================
+    private IEnumerator RotinaInvulnerabilidade()
+    {
+        _estaInvulneravel = true;
+        
+        // Espera a fração de segundo definida no Inspector (padrão 0.2s)
+        yield return new WaitForSeconds(tempoInvulneravel);
+        
+        _estaInvulneravel = false;
     }
 
     private IEnumerator CheckDetectDeathRoutine()
@@ -108,50 +151,53 @@ public class EnemyHealth : MonoBehaviour
     {
         if (currentHealth <= 0)
         {
-            // Entrega das Almas apenas uma vez por ciclo de fogueira
             if (PlayerController.Instance != null && !_hasDroppedSouls)
             {
                 PlayerProgression playerXP = PlayerController.Instance.GetComponent<PlayerProgression>();
                 if (playerXP != null)
                 {
                     playerXP.AddSouls(polenDropped);
-                    _hasDroppedSouls = true; // Impede ganho infinito de Pólen
+                    _hasDroppedSouls = true; 
                 }
             }
 
             if (deathVFXPrefab) Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
             
-            // NOVO: O inimigo morreu! Volta a tocar uma das músicas calmas!
             if (Project.Scripts.Audio.AudioManager.Instance != null)
             {
                 Project.Scripts.Audio.AudioManager.Instance.PlayAmbientMusic();
             }
-            
-            // Desativamos o objeto para ele não sumir da hierarquia
-            gameObject.SetActive(false);
+
+            if (isBoss && BossHealthBar.Instancia != null)
+            {
+                BossHealthBar.Instancia.DesativarBarra();
+            }
+
+            SummonerBossController bossCtrl = GetComponent<SummonerBossController>();
+            if (bossCtrl != null)
+            {
+                bossCtrl.OnBossDeath();
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
     }
 
-    // INTERFACE DE COMANDO DA FOGUEIRA: Reseta o monstro para as configurações de fábrica
     public void ResetEnemyToDefaultState()
     {
-        // 1. Move o monstro de volta para onde ele nasceu
         transform.position = _initialPosition;
-        
-        // 2. Restaura os status vitais
         currentHealth = startingHealth;
         _hasDroppedSouls = false;
+        _estaInvulneravel = false; // [SISTEMA DE I-FRAMES] Zera a invulnerabilidade ao reviver
 
-        // 3. Atualiza a barra de vida para o visual cheio
         if (_healthBar != null)
         {
             _healthBar.UpdateHealthBar(currentHealth, startingHealth);
         }
 
-        // 4. Se o monstro possui IA de Patrulha, força o script de IA a atualizar a sua posição âncora
         GetComponent<EnemyIA>()?.ResetSpawnAnchor(_initialPosition);
-
-        // 5. Acorda o GameObject novamente na cena
         gameObject.SetActive(true);
     }
 }

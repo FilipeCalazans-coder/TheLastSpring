@@ -1,4 +1,5 @@
 using UnityEngine;
+using Project.Scripts.Inventory; // [NOVO] Necessário para aceder ao MerchantController
 
 namespace Project.Scripts.Dialogue
 {
@@ -8,8 +9,6 @@ namespace Project.Scripts.Dialogue
         public DialogueData startingDialogue;
         
         private bool _isPlayerNear = false;
-        
-        // NOVA VARIÁVEL DO INPUT SYSTEM
         private PlayerControls _playerControls;
 
         private void Awake()
@@ -20,22 +19,45 @@ namespace Project.Scripts.Dialogue
         private void OnEnable()
         {
             _playerControls.Enable();
+            // [NOVO] Começa a ouvir o evento do Manager
+            DialogueManager.OnDialogueAction += ExecutarAcaoEspecial;
         }
 
         private void OnDisable()
         {
             _playerControls.Disable();
+            // [NOVO] Pára de ouvir o evento para evitar bugs de memória
+            DialogueManager.OnDialogueAction -= ExecutarAcaoEspecial;
         }
 
         private void Update()
         {
-            // VERIFICAÇÃO COM O NOVO INPUT SYSTEM
             if (_isPlayerNear && _playerControls.Menu.Interact.triggered)
             {
                 if (DialogueManager.Instance != null && !DialogueManager.Instance.dialoguePanel.activeSelf)
                 {
                     DialogueManager.Instance.StartDialogue(startingDialogue);
                 }
+            }
+        }
+
+        // ==========================================
+        // [NOVO] O cérebro que decide qual script abrir
+        // ==========================================
+        private void ExecutarAcaoEspecial(string acao)
+        {
+            // Só executa se a Fiorella estiver perto DESTE NPC específico
+            if (!_isPlayerNear) return;
+
+            if (acao == "AbrirMercador")
+            {
+                MerchantController mercador = GetComponent<MerchantController>();
+                if (mercador != null) mercador.OpenMerchantMenu();
+            }
+            else if (acao == "AbrirQuest")
+            {
+                NPCQuestGiver missao = GetComponent<NPCQuestGiver>();
+                if (missao != null) missao.InteragirComNPC();
             }
         }
 

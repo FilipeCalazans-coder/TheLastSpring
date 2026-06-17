@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89517f5cd08fd674f85a1b09ad525af7, type: 3}
+  m_Name: ArtefatoAntigo
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Inventory.ItemData
+  itemName: Artefato Antigo
+  description: "N\xE3o se sabe ao certo sua utilidade, mas parece sussurar cantigas
+    esquecidas."
+  icon: {fileID: 7192588993180669894, guid: 7a170afa24d7ff24682d0f0eb83fd0c2, type: 3}
+  soulValue: 0
+  isConsumable: 0
+  canBeSold: 0
+  isInventoryExpansion: 0
+  slotsToGain: 6
+  isSpeedBoost: 0
+  speedMultiplier: 1.5
+  buffDuration: 5
+  isPollenItem: 0

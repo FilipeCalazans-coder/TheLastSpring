@@ -14,19 +14,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TrailRenderer myTrailRenderer;
     
     // ==========================================
-    // NOVO: Efeito Visual em Sprite para o Dash
+    // Efeito Visual em Sprite para o Dash
     // ==========================================
     [SerializeField] private GameObject dashVFXPrefab;
     
     [Header("Habilidades Especiais")]
-    [SerializeField] private GameObject landminePrefab; // O objeto da mina que vamos atirar
-    [SerializeField] private float skillCooldown = 2f;  // Tempo de espera entre cada mina
+    [SerializeField] private GameObject landminePrefab; 
+    [SerializeField] private float skillCooldown = 2f;  
     private float _lastSkillTime;
 
     [Header("Skill 2: Dash com Dano")]
-    [SerializeField] private float dashDamageRadius = 1.2f; // Tamanho da área de dano em volta dela
-    [SerializeField] private int dashDamage = 30; // Dano do dash
-    [SerializeField] private float skill2Cooldown = 3f; // Tempo de espera
+    [SerializeField] private float dashDamageRadius = 1.2f; 
+    [SerializeField] private int dashDamage = 30; 
+    [SerializeField] private float skill2Cooldown = 3f; 
     private float _lastSkill2Time;
 
     [Header("Skill 3: Afastamento (Explosão de Vento)")]
@@ -34,31 +34,45 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float afastamentoForce = 20f;   
     [SerializeField] private int afastamentoDamage = 10;     
     [SerializeField] private float skill3Cooldown = 4f;      
-    // ==========================================
-    // NOVO: A variável que vai guardar o Prefab da animação
-    // ==========================================
+
     [SerializeField] private GameObject afastamentoVFXPrefab; 
     private float _lastSkill3Time;
 
     [Header("Skill 4: Teleporte (Muda de Raiz)")]
-    [SerializeField] private GameObject mudaPrefab; // O objeto da planta que servirá de âncora
-    [SerializeField] private float skill4Cooldown = 5f; // Tempo de espera após o teleporte
+    [SerializeField] private GameObject mudaPrefab; 
+    [SerializeField] private float skill4Cooldown = 5f; 
     private float _lastSkill4Time;
-    private GameObject _activeMuda; // O jogo vai guardar a Muda aqui para saber onde ela está
+    private GameObject _activeMuda; 
+
+    // ============================================================
+    // [SISTEMA DE VFX] NOVAS REFERÊNCIAS PARA O BROTINHO MÁGICO
+    // ============================================================
+    [Header("VFX Visual do Brotinho Mágico")]
+    [Tooltip("Efeito visual rápido que aparece no pé da Fiorella ao plantar.")]
+    [SerializeField] private GameObject vfxPlantarPrefab;
+
+    [Tooltip("Efeito visual que aparece tanto na origem quanto no destino do teleporte.")]
+    [SerializeField] private GameObject vfxTeleportePrefab;
 
     private PlayerControls playerControls;
     private Vector2 movement;
+    
+    // [SISTEMA DE DIREÇÃO] Novas variáveis para corrigir o Dash
+    private Vector2 _lastMoveDirection = Vector2.right; // Direção padrão inicial
+    private Vector2 _dashDirection; // Direção travada durante a execução do dash
+
     private Rigidbody2D rb;
     private Animator myAnimator;
     private SpriteRenderer mySpriteRenderer;
-    private Camera _mainCamera; // OTIMIZAÇÃO: Guarda a câmera na memória
+    private Camera _mainCamera; 
     
     private float _currentSpeed;
-    private float _itemSpeedMultiplier = 1f; 
-    
+    private float _itemSpeedMultiplier = 1f;      
     private bool facingLeft = false;
+    private bool isKnockedBack = false;
     private bool isDashing = false;
     public bool IsDashing => isDashing;
+
     private PlayerToxicResinReceiver _resinReceiver;
 
     private void Awake()
@@ -68,15 +82,13 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
         mySpriteRenderer = GetComponent<SpriteRenderer>();
-        _mainCamera = Camera.main; // OTIMIZAÇÃO APLICADA AQUI
+        _mainCamera = Camera.main; 
         _resinReceiver = GetComponent<PlayerToxicResinReceiver>();
     }
 
     private void Start()
     {
         _currentSpeed = baseMoveSpeed;
-
-        // Garante que a Fiorella não inicie o jogo em estado de dash
         isDashing = false;
     }
 
@@ -93,30 +105,31 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         PlayerInput();
-        AdjustPlayerFacingDirection(); // MOVIDO: Input do mouse deve ficar no Update!
+        AdjustPlayerFacingDirection(); 
     }
 
     private void FixedUpdate()
     {
-        Move(); // BLINDADO: FixedUpdate agora cuida EXCLUSIVAMENTE da física!
+        Move(); 
     }
 
     private void PlayerInput()
     {
-        // ==========================================
-        // CORREÇÃO: Bloqueia ações se o menu estiver aberto (jogo pausado)
-        // ==========================================
         if (Time.timeScale == 0f)
         {
-            // Força o movimento a ser zero para o Animator não bugar
             movement = Vector2.zero;
             myAnimator.SetFloat("moveX", 0);
             myAnimator.SetFloat("moveY", 0);
-            return; // Sai da função ignorando todos os botões abaixo!
+            return; 
         }
 
-        // --- O RESTO CONTINUA IGUAL ---
         movement = playerControls.Movement.Move.ReadValue<Vector2>();
+        
+        // [SISTEMA DE DIREÇÃO] Atualiza a memória visual apenas quando há movimento real
+        if (movement != Vector2.zero)
+        {
+            _lastMoveDirection = movement.normalized;
+        }
 
         myAnimator.SetFloat("moveX", movement.x);
         myAnimator.SetFloat("moveY", movement.y);
@@ -147,13 +160,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // --- SISTEMA DE HABILIDADES ---
     private void CastSkill1()
     {
-        // 1. Verifica o Cooldown (Espera)
         if (Time.time < _lastSkillTime + skillCooldown) return;
 
-        // 2. Pergunta ao PlayerSkills se o jogador JÁ COMPROU esta habilidade
         PlayerSkills skills = GetComponent<PlayerSkills>();
         if (skills != null && skills.HasSkillByID("minas_terrestres"))
         {
@@ -163,22 +173,20 @@ public class PlayerController : MonoBehaviour
                 _lastSkillTime = Time.time;
                 Debug.Log("<color=green>Fiorella plantou uma Mina Terrestre com o NOVO Input!</color>");
             }
-            else
-            {
-                Debug.LogWarning("Prefab da Mina não foi colocado no Inspector!");
-            }
         }
     }
 
     private void CastSkill2()
     {
-        // Verifica o cooldown e se ela já não está a meio de um dash
         if (Time.time < _lastSkill2Time + skill2Cooldown) return;
         if (isDashing) return;
 
         PlayerSkills skills = GetComponent<PlayerSkills>();
         if (skills != null && skills.HasSkillByID("dash_dano"))
         {
+            // [SISTEMA DE DIREÇÃO] Trava a direção baseada no input atual ou na memória
+            _dashDirection = (movement != Vector2.zero) ? movement.normalized : _lastMoveDirection;
+
             StartCoroutine(DamageDashRoutine());
             _lastSkill2Time = Time.time;
             Debug.Log("<color=magenta>Fiorella usou o Dash com Dano!</color>");
@@ -190,25 +198,19 @@ public class PlayerController : MonoBehaviour
         isDashing = true;
         PlayerHealth health = GetComponent<PlayerHealth>();
         
-        // 1. Prepara o Dash (Invulnerabilidade e Cor Vermelha para dar feedback)
         if (health != null) health.isInvulnerable = true;
         mySpriteRenderer.color = new Color(1f, 0.5f, 0.5f, 0.8f); 
         
-        _currentSpeed = baseMoveSpeed * dashSpeedMultiplier; // Acelera
+        _currentSpeed = baseMoveSpeed * dashSpeedMultiplier; 
         myTrailRenderer.emitting = true;
 
-        float dashTime = 0.15f; // Quanto tempo o dash dura
+        float dashTime = 0.15f; 
         float timer = 0f;
-
-        // O nosso "caderno de notas" para evitar dar dano duplo ao mesmo inimigo
         HashSet<EnemyHealth> enemiesHit = new HashSet<EnemyHealth>();
 
-        // 2. Durante o tempo do Dash, verifica a cada frame se tocou num inimigo
         while (timer < dashTime)
         {
             timer += Time.deltaTime;
-
-            // Cria um círculo invisível à volta da Fiorella e apanha tudo o que tocar nele
             Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, dashDamageRadius);
             
             foreach (Collider2D hit in hitColliders)
@@ -217,68 +219,51 @@ public class PlayerController : MonoBehaviour
                 {
                     EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
                     
-                    // Se tocou num inimigo e ainda não o anotamos no caderno
                     if (enemy != null && !enemiesHit.Contains(enemy))
                     {
                         enemy.TakeDamage(dashDamage);
-                        enemiesHit.Add(enemy); // Anota no caderno
+                        enemiesHit.Add(enemy); 
                         Debug.Log("<color=red>Slash! Dash de Dano acertou!</color>");
                     }
                 }
             }
-            yield return null; // Espera pelO próxima frame
+            yield return null; 
         }
 
-        // 3. O Dash acabou, volta tudo ao normal
         _currentSpeed = baseMoveSpeed;
         myTrailRenderer.emitting = false;
-
         if (health != null) health.isInvulnerable = false;
         mySpriteRenderer.color = new Color(1f, 1f, 1f, 1f); 
 
-        // Tempo extra de espera antes de poder usar o Dash normal de novo (para evitar spam)
         yield return new WaitForSeconds(0.25f);
         isDashing = false;
     }
 
     private void CastSkill3()
     {
-        // 1. Verifica o tempo de espera (Cooldown)
         if (Time.time < _lastSkill3Time + skill3Cooldown) return;
 
-        // 2. Pergunta ao PlayerSkills se o jogador JÁ COMPROU esta habilidade
         PlayerSkills skills = GetComponent<PlayerSkills>();
         if (skills != null && skills.HasSkillByID("afastamento"))
         {
-            // ==========================================
-            // NOVO: Faz a animação da explosão de vento aparecer na tela!
-            // ==========================================
             if (afastamentoVFXPrefab != null)
             {
-                // Cria o efeito visual na exata posição da Fiorella
                 Instantiate(afastamentoVFXPrefab, transform.position, Quaternion.identity);
             }
 
-            // 3. Cria o círculo de explosão em volta da Fiorella
             Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, afastamentoRadius);
-            
-            // Vamos adicionar um pequeno feedback visual à Fiorella (ficar branca rápido)
             StartCoroutine(FlashAfastamentoRoutine());
 
             foreach (Collider2D hit in hitColliders)
             {
-                // Se a explosão apanhou um inimigo...
                 if (hit.CompareTag("Enemy"))
                 {
-                    // Empurra-o para trás usando o teu script de Knockback!
                     KnockBack kb = hit.GetComponent<KnockBack>();
                     if (kb != null)
                     {
-                        // O 'transform' é a Fiorella, para o inimigo saber de onde vem o empurrão e voar para o lado oposto
                         kb.GetKnockedBack(this.transform, afastamentoForce); 
                     }
 
-                    // Aplica um pequeno dano
                     EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
                     if (enemy != null)
                     {
@@ -286,116 +271,121 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
-
             _lastSkill3Time = Time.time;
             Debug.Log("<color=cyan>Habilidade 3: Afastamento ativado com VFX!</color>");
         }
     }
 
-    // Um pequeno truque visual para parecer que ela libertou energia
     private IEnumerator FlashAfastamentoRoutine()
     {
-        mySpriteRenderer.color = new Color(0.5f, 1f, 0.5f, 1f); // Fica num tom esverdeado brilhante (natureza)
+        mySpriteRenderer.color = new Color(0.5f, 1f, 0.5f, 1f); 
         yield return new WaitForSeconds(0.15f);
-        mySpriteRenderer.color = Color.white; // Volta ao normal
+        mySpriteRenderer.color = Color.white; 
     }
 
+    // ============================================================
+    // ATUALIZAÇÃO DA SKILL 4 COM INTEGRAÇÃO DE VFX
+    // ============================================================
     private void CastSkill4()
     {
         PlayerSkills skills = GetComponent<PlayerSkills>();
         
-        // Verifica se a Fiorella já comprou a habilidade
         if (skills != null && skills.HasSkillByID("teleporte"))
         {
-            // ----------------------------------------------------
-            // FASE 1: Se a muda AINDA NÃO existe, vamos plantá-la
-            // ----------------------------------------------------
             if (_activeMuda == null)
             {
-                // Só podemos plantar se o Cooldown já tiver acabado
                 if (Time.time < _lastSkill4Time + skill4Cooldown) return;
-
+                
                 if (mudaPrefab != null)
                 {
-                    // Cria a muda e GUARDA A REFERÊNCIA na variável _activeMuda
                     _activeMuda = Instantiate(mudaPrefab, transform.position, Quaternion.identity);
+                    
+                    // [NOVO] Instancia o VFX ao plantar a muda
+                    if (vfxPlantarPrefab != null)
+                    {
+                        Instantiate(vfxPlantarPrefab, transform.position, Quaternion.identity);
+                    }
+                    
                     Debug.Log("<color=green>Muda plantada! Prime 'V' de novo para teleportar.</color>");
                 }
-                else
-                {
-                    Debug.LogWarning("O Prefab da Muda não está configurado no Inspector!");
-                }
             }
-            // ----------------------------------------------------
-            // FASE 2: Se a muda JÁ EXISTE, vamos teleportar
-            // ----------------------------------------------------
             else
             {
-                // Move a Fiorella magicamente para a posição exata da muda
+                // [NOVO] Instancia o VFX na origem ANTES do teleporte
+                if (vfxTeleportePrefab != null)
+                {
+                    Instantiate(vfxTeleportePrefab, transform.position, Quaternion.identity);
+                }
+
+                // Move a personagem
                 transform.position = _activeMuda.transform.position;
-                
-                // Dá um pequeno efeito visual para não ser um corte tão seco
+
+                // [NOVO] Instancia o VFX no destino DEPOIS do teleporte
+                if (vfxTeleportePrefab != null)
+                {
+                    Instantiate(vfxTeleportePrefab, transform.position, Quaternion.identity);
+                }
+
                 StartCoroutine(TeleportFlashRoutine());
-
-                // Destrói a muda, porque já foi usada
+                
                 Destroy(_activeMuda);
-                _activeMuda = null; // Limpa a memória para permitir plantar uma nova no futuro
-
-                // Começa a contar o tempo de espera APÓS o teleporte ser concluído
+                _activeMuda = null; 
                 _lastSkill4Time = Time.time;
                 Debug.Log("<color=cyan>Fiorella teleportou-se com sucesso!</color>");
             }
         }
     }
 
-    // Um pequeno efeito de "piscar" verde para dar a sensação de magia da natureza
     private IEnumerator TeleportFlashRoutine()
     {
         PlayerHealth health = GetComponent<PlayerHealth>();
         
-        // Dá um pingo de invulnerabilidade no frame do teleporte para ela não morrer assim que chegar
         if (health != null) health.isInvulnerable = true;
         
-        mySpriteRenderer.color = new Color(0f, 1f, 0.5f, 0.5f); // Verde transparente
+        mySpriteRenderer.color = new Color(0f, 1f, 0.5f, 0.5f); 
         yield return new WaitForSeconds(0.2f);
-        mySpriteRenderer.color = Color.white; // Volta ao normal
+        mySpriteRenderer.color = Color.white; 
         
         if (health != null) health.isInvulnerable = false;
     }
 
     private void Move()
-    {
-        float resinMultiplier = (_resinReceiver != null) ? _resinReceiver.CurrentSpeedMultiplier : 1f;
-        float finalSpeed = _currentSpeed * _itemSpeedMultiplier * resinMultiplier;
-        rb.MovePosition(rb.position + movement * (finalSpeed * Time.fixedDeltaTime));
-    }
+{
+    // [NOVO] Se estiver a sofrer knockback, ignora os comandos de andar
+    if (isKnockedBack) return; 
+
+    float resinMultiplier = (_resinReceiver != null) ? _resinReceiver.CurrentSpeedMultiplier : 1f;
+    float finalSpeed = _currentSpeed * _itemSpeedMultiplier * resinMultiplier;
+
+    Vector2 activeDirection = isDashing ? _dashDirection : movement;
+
+    rb.MovePosition(rb.position + activeDirection * (finalSpeed * Time.fixedDeltaTime));
+}
 
     private void AdjustPlayerFacingDirection()
     {
-        // Se a Fiorella estiver se movendo para a esquerda (tecla A ou analógico pra esquerda)
         if (movement.x < 0)
         {
             mySpriteRenderer.flipX = true;
             facingLeft = true;
         }
-        // Se a Fiorella estiver se movendo para a direita (tecla D ou analógico pra direita)
         else if (movement.x > 0)
         {
             mySpriteRenderer.flipX = false;
             facingLeft = false;
         }
-        // Nota: Se movement.x for exatamente 0 (parada), ela apenas mantém a direção atual.
     }
 
-    // --- SISTEMA DE DASH ---
     private void Dash()
     {
         if (isDashing) return;
-
         PlayerStamina stamina = GetComponent<PlayerStamina>();
         
         if (stamina != null && stamina.TrySpendStamina(25f))
         {
+            // [SISTEMA DE DIREÇÃO] Define e trava a direção exata para a esquiva básica
+            _dashDirection = (movement != Vector2.zero) ? movement.normalized : _lastMoveDirection;
+
             StartCoroutine(DashRoutine());
         }
     }
@@ -408,46 +398,62 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(0.05f); 
         
         if (health != null) health.isInvulnerable = true;
-        
         mySpriteRenderer.color = new Color(1f, 1f, 1f, 0.5f); 
 
-        // ==========================================
-        // NOVO: Criando o Efeito Visual do Dash
-        // ==========================================
         if (dashVFXPrefab != null)
         {
-            // Cria o efeito na posição atual da Fiorella
             GameObject vfx = Instantiate(dashVFXPrefab, transform.position, Quaternion.identity);
-            
-            // Tenta espelhar o efeito para o lado correto
             SpriteRenderer vfxSprite = vfx.GetComponent<SpriteRenderer>();
+            
             if (vfxSprite != null)
             {
-                // Se a Fiorella está virada para a esquerda, vira o efeito também
                 vfxSprite.flipX = mySpriteRenderer.flipX; 
             }
         }
 
         _currentSpeed = baseMoveSpeed * dashSpeedMultiplier;
         
-        // Se ainda quiser usar o rastro antigo, ele continua funcionando
         if (myTrailRenderer != null) myTrailRenderer.emitting = true;
-
+        
         yield return new WaitForSeconds(0.1f); 
         
         _currentSpeed = baseMoveSpeed;
         if (myTrailRenderer != null) myTrailRenderer.emitting = false;
-
         if (health != null) health.isInvulnerable = false;
+        
         yield return new WaitForSeconds(0.05f); 
         
         mySpriteRenderer.color = new Color(1f, 1f, 1f, 1f); 
-
         yield return new WaitForSeconds(0.25f);
+        
         isDashing = false;
     }
 
-    // --- SISTEMA DE BUFFS (Itens) ---
+    // ==========================================
+    // SISTEMA DE KNOCKBACK (EMPURRÃO)
+    // ==========================================
+    public void ApplyKnockback(Vector2 direction, float force, float duration = 0.2f)
+    {
+        StartCoroutine(KnockbackRoutine(direction, force, duration));
+    }
+
+    private IEnumerator KnockbackRoutine(Vector2 direction, float force, float duration)
+    {
+        isKnockedBack = true;
+        isDashing = false; // Cancela o dash se ela for atingida no meio dele
+
+        float timer = 0f;
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            // Empurra a Fiorella de forma consistente usando o mesmo método de movimento dela
+            rb.MovePosition(rb.position + direction * (force * Time.deltaTime));
+            yield return null;
+        }
+
+        isKnockedBack = false;
+    }
+
     public void ApplySpeedBuff(float multiplier, float duration)
     {
         StartCoroutine(SpeedBuffRoutine(multiplier, duration));
