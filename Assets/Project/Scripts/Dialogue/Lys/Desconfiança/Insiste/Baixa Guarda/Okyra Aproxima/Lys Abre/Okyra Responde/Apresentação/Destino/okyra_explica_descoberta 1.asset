@@ -10,11 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 043b33ad15a714840abc7d19473869f5, type: 3}
-  m_Name: Tuim_Quest_Sucesso
+  m_Name: okyra_explica_descoberta 1
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Dialogue.DialogueData
-  npcName: Tuim
+  npcName: Lys
+  npcPortrait: {fileID: 30192422, guid: 7e67cc1280ee2b948a0d50fe64c2bff7, type: 3}
+  flipPortrait: 1
   npcLines:
-  - "Voc\xEA conseguiu! Muito obrigado, eu estive buscando por isso h\xE1 muito tempo.
-    Ganhei de minha m\xE3e antes de toda essa bagun\xE7a acontecer. Isso \xE9 tudo
-    o que me sobrou dela..."
-  options: []
+  - ...
+  - Itauba.
+  options:
+  - playerChoiceText: "Voc\xEA conhece?"
+    nextDialogue: {fileID: 0}
+    actionName: 
+  freezePlayer: 1

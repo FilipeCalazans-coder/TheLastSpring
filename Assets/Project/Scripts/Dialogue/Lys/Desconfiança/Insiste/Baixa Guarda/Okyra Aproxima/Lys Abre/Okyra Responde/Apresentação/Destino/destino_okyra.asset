@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 043b33ad15a714840abc7d19473869f5, type: 3}
+  m_Name: destino_okyra
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Dialogue.DialogueData
+  npcName: Lys
+  npcPortrait: {fileID: 30192422, guid: 7e67cc1280ee2b948a0d50fe64c2bff7, type: 3}
+  flipPortrait: 1
+  npcLines:
+  - "Onde voc\xEA est\xE1 indo, Okyra?"
+  options:
+  - playerChoiceText: "Encontrei algo num corpo ali atr\xE1s. Uma ins\xEDgnia, coordenadas.
+      Algum grupo organizado mandou gente at\xE9 aqui."
+    nextDialogue: {fileID: 11400000, guid: 12e89060ee62547408030e69282d246e, type: 2}
+    actionName: 
+  - playerChoiceText: "Ainda n\xE3o sei direito. Mas ficar aqui n\xE3o \xE9 uma op\xE7\xE3o."
+    nextDialogue: {fileID: 11400000, guid: 56d038d20fabfa64bba37d33d5600965, type: 2}
+    actionName: 
+  freezePlayer: 1

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 043b33ad15a714840abc7d19473869f5, type: 3}
+  m_Name: okyra_explica_descoberta 2
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Dialogue.DialogueData
+  npcName: Lys
+  npcPortrait: {fileID: 30192422, guid: 7e67cc1280ee2b948a0d50fe64c2bff7, type: 3}
+  flipPortrait: 1
+  npcLines:
+  - De nome. Ouvi de outros que passaram por aqui antes de morrerem.
+  - "Dizem que \xE9 onde as coisas est\xE3o se reorganizando. Nunca tive motivo para
+    ir."
+  - "At\xE9 agora."
+  options:
+  - playerChoiceText: Continuar
+    nextDialogue: {fileID: 11400000, guid: 71dc6118359fa0441be83eb338c5f3de, type: 2}
+    actionName: 
+  freezePlayer: 1

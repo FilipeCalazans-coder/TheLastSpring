@@ -2,25 +2,29 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System; 
+using System;
 
 namespace Project.Scripts.Dialogue
 {
     public class DialogueManager : MonoBehaviour
     {
-        public static DialogueManager Instance; 
-
-        // O Evento Global que avisa os outros scripts
+        public static DialogueManager Instance;
         public static event Action<string> OnDialogueAction;
 
+        // NOVO: Evento que avisa o jogo se o jogador deve ser congelado
+        public static event Action<bool> OnDialogueStateChanged;
+
         [Header("Referências da UI")]
-        public GameObject dialoguePanel; 
-        public TextMeshProUGUI nameText; 
-        public TextMeshProUGUI dialogueText; 
+        public GameObject dialoguePanel;
+        public TextMeshProUGUI nameText;
+        public TextMeshProUGUI dialogueText;
         
+        // NOVO: Referência para a imagem de retrato na UI
+        public Image portraitImage; 
+
         [Header("Opções de Resposta")]
-        public Transform optionsParent; 
-        public GameObject optionButtonPrefab; 
+        public Transform optionsParent;
+        public GameObject optionButtonPrefab;
 
         private DialogueData _currentDialogue;
         private int _currentLineIndex = 0;
@@ -34,20 +38,42 @@ namespace Project.Scripts.Dialogue
 
         public void StartDialogue(DialogueData dialogue)
         {
-            // [CORREÇÃO 1] Pára qualquer texto "fantasma" que ainda esteja a ser escrito!
             StopAllCoroutines();
             _isTyping = false;
-
             _currentDialogue = dialogue;
             _currentLineIndex = 0;
             dialoguePanel.SetActive(true);
-            
-            // Limpa os botões antigos de forma segura
-            foreach (Transform child in optionsParent) 
+
+            // Dispara o evento avisando o estado de congelamento deste diálogo específico
+            OnDialogueStateChanged?.Invoke(dialogue.freezePlayer);
+
+            // ==========================================
+            // LÓGICA DO RETRATO E ESPELHAMENTO (FLIP)
+            // ==========================================
+            if (portraitImage != null)
+            {
+                if (dialogue.npcPortrait != null)
+                {
+                    portraitImage.sprite = dialogue.npcPortrait;
+                    
+                    // Lê a variável e inverte o eixo X do RectTransform se for verdadeiro
+                    Vector3 currentScale = portraitImage.rectTransform.localScale;
+                    currentScale.x = dialogue.flipPortrait ? -1f : 1f;
+                    portraitImage.rectTransform.localScale = currentScale;
+
+                    portraitImage.gameObject.SetActive(true);
+                }
+                else
+                {
+                    portraitImage.gameObject.SetActive(false); 
+                }
+            }
+
+            foreach (Transform child in optionsParent)
             {
                 Destroy(child.gameObject);
             }
-            
+
             StartCoroutine(TypeLine());
         }
 
@@ -60,9 +86,9 @@ namespace Project.Scripts.Dialogue
             foreach (char c in _currentDialogue.npcLines[_currentLineIndex].ToCharArray())
             {
                 dialogueText.text += c;
-                yield return new WaitForSeconds(0.02f); 
+                yield return new WaitForSeconds(0.02f);
             }
-            
+
             _isTyping = false;
             CheckShowOptions();
         }
@@ -80,7 +106,7 @@ namespace Project.Scripts.Dialogue
                     _isTyping = false;
                     CheckShowOptions();
                 }
-                else if (optionsParent.childCount == 0) 
+                else if (optionsParent.childCount == 0)
                 {
                     NextLine();
                 }
@@ -108,7 +134,6 @@ namespace Project.Scripts.Dialogue
                 {
                     GameObject btnObj = Instantiate(optionButtonPrefab, optionsParent);
                     btnObj.GetComponentInChildren<TextMeshProUGUI>().text = option.playerChoiceText;
-                    
                     btnObj.GetComponent<Button>().onClick.AddListener(() => OnOptionSelected(option));
                 }
             }
@@ -116,17 +141,15 @@ namespace Project.Scripts.Dialogue
 
         private void OnOptionSelected(DialogueOption option)
         {
-            // [CORREÇÃO 2] Fecha ou avança a janela PRIMEIRO.
             if (option.nextDialogue != null)
             {
-                StartDialogue(option.nextDialogue); 
+                StartDialogue(option.nextDialogue);
             }
             else
             {
-                EndDialogue(); 
+                EndDialogue();
             }
 
-            // [CORREÇÃO 2] E só DEPOIS dispara o evento. Se o evento abrir um novo diálogo, não haverá conflitos!
             if (!string.IsNullOrEmpty(option.actionName))
             {
                 OnDialogueAction?.Invoke(option.actionName);
@@ -135,15 +158,17 @@ namespace Project.Scripts.Dialogue
 
         public void EndDialogue()
         {
-            // [CORREÇÃO 1] Garante que a máquina de escrever se desliga ao afastar-se do NPC
             StopAllCoroutines();
             _isTyping = false;
-
             dialoguePanel.SetActive(false);
-            foreach (Transform child in optionsParent) 
+
+            foreach (Transform child in optionsParent)
             {
                 Destroy(child.gameObject);
             }
+
+            // Avisa o jogo que o diálogo acabou e o jogador pode voltar a mover-se (false)
+            OnDialogueStateChanged?.Invoke(false);
         }
     }
 }

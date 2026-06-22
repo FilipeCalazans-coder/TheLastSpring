@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 043b33ad15a714840abc7d19473869f5, type: 3}
-  m_Name: Tuim
+  m_Name: apresentacao 2
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Dialogue.DialogueData
-  npcName: Tuim
+  npcName: Lys
+  npcPortrait: {fileID: 30192422, guid: 7e67cc1280ee2b948a0d50fe64c2bff7, type: 3}
+  flipPortrait: 1
   npcLines:
-  - "Ol\xE1! O que este viajante procura? Um Artefato Antigo?"
+  - "Pois \xE9."
   options:
-  - playerChoiceText: Mercador
-    nextDialogue: {fileID: 0}
-    actionName: AbrirMercador
-  - playerChoiceText: Artefato Antigo?
-    nextDialogue: {fileID: 11400000, guid: 9e070202c22631241a3882e103e4a30f, type: 2}
-    actionName: AbrirQuest
+  - playerChoiceText: Continuar
+    nextDialogue: {fileID: 11400000, guid: 4928c3fc7ffd09f4cae2810a6d1f0f58, type: 2}
+    actionName: 
+  freezePlayer: 1

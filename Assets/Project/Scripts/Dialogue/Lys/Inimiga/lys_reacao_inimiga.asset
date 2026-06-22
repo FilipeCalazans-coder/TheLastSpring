@@ -10,9 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 043b33ad15a714840abc7d19473869f5, type: 3}
-  m_Name: Reposta_Lore
+  m_Name: lys_reacao_inimiga
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Dialogue.DialogueData
-  npcName: 
+  npcName: Okyra
+  npcPortrait: {fileID: -1221782746, guid: b55a8814655e0f741ac6c381992fd7e8, type: 3}
+  flipPortrait: 0
   npcLines:
-  - "Se vc est\xE1 lendo, \xE9 pq deu certo!"
-  options: []
+  - "Eu n\xE3o sou sua inimiga."
+  options:
+  - playerChoiceText: Continuar
+    nextDialogue: {fileID: 11400000, guid: e076f9f8fc3ac8c4b8cbc362dffd5819, type: 2}
+    actionName: 
+  freezePlayer: 1

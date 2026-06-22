@@ -196,6 +196,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Tuim-default_4
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 306
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1bbec26f9733f0945ac31f5fab7a7286
+      internalID: 129743719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -216,6 +238,7 @@ TextureImporter:
       Tuim-default_1: 5194176598284790513
       Tuim-default_2: 2508773413539730164
       Tuim-default_3: 5451061347837558972
+      Tuim-default_4: 129743719
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

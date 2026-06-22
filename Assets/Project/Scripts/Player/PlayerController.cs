@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Project.Scripts.Player;
+using Project.Scripts.Dialogue; // Adicionado para acessar os eventos de diálogo
 
 public class PlayerController : MonoBehaviour
 {
@@ -57,9 +58,10 @@ public class PlayerController : MonoBehaviour
     private PlayerControls playerControls;
     private Vector2 movement;
     
-    // [SISTEMA DE DIREÇÃO] Novas variáveis para corrigir o Dash
-    private Vector2 _lastMoveDirection = Vector2.right; // Direção padrão inicial
-    private Vector2 _dashDirection; // Direção travada durante a execução do dash
+    // [SISTEMA DE DIREÇÃO E CONTROLE]
+    private Vector2 _lastMoveDirection = Vector2.right; 
+    private Vector2 _dashDirection; 
+    private bool _canMove = true; // NOVO: Variável para travar a Okyra durante diálogos
 
     private Rigidbody2D rb;
     private Animator myAnimator;
@@ -95,21 +97,51 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         playerControls.Enable();
+        // NOVO: Assina o evento global de diálogo
+        DialogueManager.OnDialogueStateChanged += HandlePlayerFreeze;
     }
 
     private void OnDisable()
     {
         playerControls.Disable();
+        // NOVO: Remove a assinatura para evitar vazamentos de memória
+        DialogueManager.OnDialogueStateChanged -= HandlePlayerFreeze;
+    }
+
+    // NOVO: Método que processa a trava de movimentação
+    private void HandlePlayerFreeze(bool freeze)
+    {
+        _canMove = !freeze;
+
+        if (freeze)
+        {
+            // Zera o movimento para impedir deslizamentos residuais
+            movement = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
+            
+            // Força a animação a voltar para o estado "Idle"
+            if (myAnimator != null)
+            {
+                myAnimator.SetFloat("moveX", 0);
+                myAnimator.SetFloat("moveY", 0);
+            }
+        }
     }
 
     private void Update()
     {
+        // NOVO: Trava de segurança. Se não puder mover, não lê os inputs do frame
+        if (!_canMove) return;
+
         PlayerInput();
         AdjustPlayerFacingDirection(); 
     }
 
     private void FixedUpdate()
     {
+        // NOVO: Trava de segurança para a física
+        if (!_canMove) return;
+
         Move(); 
     }
 
@@ -125,7 +157,6 @@ public class PlayerController : MonoBehaviour
 
         movement = playerControls.Movement.Move.ReadValue<Vector2>();
         
-        // [SISTEMA DE DIREÇÃO] Atualiza a memória visual apenas quando há movimento real
         if (movement != Vector2.zero)
         {
             _lastMoveDirection = movement.normalized;
@@ -184,7 +215,6 @@ public class PlayerController : MonoBehaviour
         PlayerSkills skills = GetComponent<PlayerSkills>();
         if (skills != null && skills.HasSkillByID("dash_dano"))
         {
-            // [SISTEMA DE DIREÇÃO] Trava a direção baseada no input atual ou na memória
             _dashDirection = (movement != Vector2.zero) ? movement.normalized : _lastMoveDirection;
 
             StartCoroutine(DamageDashRoutine());
@@ -283,9 +313,6 @@ public class PlayerController : MonoBehaviour
         mySpriteRenderer.color = Color.white; 
     }
 
-    // ============================================================
-    // ATUALIZAÇÃO DA SKILL 4 COM INTEGRAÇÃO DE VFX
-    // ============================================================
     private void CastSkill4()
     {
         PlayerSkills skills = GetComponent<PlayerSkills>();
@@ -300,7 +327,6 @@ public class PlayerController : MonoBehaviour
                 {
                     _activeMuda = Instantiate(mudaPrefab, transform.position, Quaternion.identity);
                     
-                    // [NOVO] Instancia o VFX ao plantar a muda
                     if (vfxPlantarPrefab != null)
                     {
                         Instantiate(vfxPlantarPrefab, transform.position, Quaternion.identity);
@@ -311,16 +337,13 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                // [NOVO] Instancia o VFX na origem ANTES do teleporte
                 if (vfxTeleportePrefab != null)
                 {
                     Instantiate(vfxTeleportePrefab, transform.position, Quaternion.identity);
                 }
 
-                // Move a personagem
                 transform.position = _activeMuda.transform.position;
 
-                // [NOVO] Instancia o VFX no destino DEPOIS do teleporte
                 if (vfxTeleportePrefab != null)
                 {
                     Instantiate(vfxTeleportePrefab, transform.position, Quaternion.identity);
@@ -350,17 +373,16 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Move()
-{
-    // [NOVO] Se estiver a sofrer knockback, ignora os comandos de andar
-    if (isKnockedBack) return; 
+    {
+        if (isKnockedBack) return; 
 
-    float resinMultiplier = (_resinReceiver != null) ? _resinReceiver.CurrentSpeedMultiplier : 1f;
-    float finalSpeed = _currentSpeed * _itemSpeedMultiplier * resinMultiplier;
+        float resinMultiplier = (_resinReceiver != null) ? _resinReceiver.CurrentSpeedMultiplier : 1f;
+        float finalSpeed = _currentSpeed * _itemSpeedMultiplier * resinMultiplier;
 
-    Vector2 activeDirection = isDashing ? _dashDirection : movement;
+        Vector2 activeDirection = isDashing ? _dashDirection : movement;
 
-    rb.MovePosition(rb.position + activeDirection * (finalSpeed * Time.fixedDeltaTime));
-}
+        rb.MovePosition(rb.position + activeDirection * (finalSpeed * Time.fixedDeltaTime));
+    }
 
     private void AdjustPlayerFacingDirection()
     {
@@ -383,9 +405,7 @@ public class PlayerController : MonoBehaviour
         
         if (stamina != null && stamina.TrySpendStamina(25f))
         {
-            // [SISTEMA DE DIREÇÃO] Define e trava a direção exata para a esquiva básica
             _dashDirection = (movement != Vector2.zero) ? movement.normalized : _lastMoveDirection;
-
             StartCoroutine(DashRoutine());
         }
     }
@@ -429,9 +449,6 @@ public class PlayerController : MonoBehaviour
         isDashing = false;
     }
 
-    // ==========================================
-    // SISTEMA DE KNOCKBACK (EMPURRÃO)
-    // ==========================================
     public void ApplyKnockback(Vector2 direction, float force, float duration = 0.2f)
     {
         StartCoroutine(KnockbackRoutine(direction, force, duration));
@@ -440,13 +457,12 @@ public class PlayerController : MonoBehaviour
     private IEnumerator KnockbackRoutine(Vector2 direction, float force, float duration)
     {
         isKnockedBack = true;
-        isDashing = false; // Cancela o dash se ela for atingida no meio dele
+        isDashing = false; 
 
         float timer = 0f;
         while (timer < duration)
         {
             timer += Time.deltaTime;
-            // Empurra a Fiorella de forma consistente usando o mesmo método de movimento dela
             rb.MovePosition(rb.position + direction * (force * Time.deltaTime));
             yield return null;
         }

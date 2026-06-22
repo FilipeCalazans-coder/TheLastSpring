@@ -10,10 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 043b33ad15a714840abc7d19473869f5, type: 3}
-  m_Name: Tuim_Quest_Fim
+  m_Name: lys_abre_um_pouco
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Dialogue.DialogueData
-  npcName: Tuim
+  npcName: Lys
+  npcPortrait: {fileID: 30192422, guid: 7e67cc1280ee2b948a0d50fe64c2bff7, type: 3}
+  flipPortrait: 1
   npcLines:
-  - "Estou te devendo uma! Ainda n\xE3o tenho como te recompensar... Volte mais tarde
-    e certamente vou ter algo para voc\xEA. "
+  - Mivi.
+  - Era o nome dela.
+  - "Morreu procurando flores que ainda n\xE3o estivessem contaminadas."
+  - Todas elas morreram assim.
   options: []
+  freezePlayer: 1

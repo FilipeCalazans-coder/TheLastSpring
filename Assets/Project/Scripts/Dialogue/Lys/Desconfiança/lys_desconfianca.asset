@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 043b33ad15a714840abc7d19473869f5, type: 3}
+  m_Name: lys_desconfianca
+  m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.Dialogue.DialogueData
+  npcName: Lys
+  npcPortrait: {fileID: 30192422, guid: 7e67cc1280ee2b948a0d50fe64c2bff7, type: 3}
+  flipPortrait: 1
+  npcLines:
+  - Bem.
+  - "Ningu\xE9m est\xE1 bem. Olha ao redor."
+  - "E respostas sobre o que aconteceu aqui n\xE3o v\xE3o te ajudar. S\xF3 v\xE3o
+    te machucar mais."
+  - "Some. \xC9 mais seguro."
+  options:
+  - playerChoiceText: Continuar
+    nextDialogue: {fileID: 11400000, guid: 8bbec8902fbd0744e91fe0fd66cbaa11, type: 2}
+    actionName: 
+  freezePlayer: 1

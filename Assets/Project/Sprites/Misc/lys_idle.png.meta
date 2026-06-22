@@ -1,52 +1,31 @@
 fileFormatVersion: 2
-guid: b55a8814655e0f741ac6c381992fd7e8
+guid: 7e67cc1280ee2b948a0d50fe64c2bff7
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3790293722304546687
-    second: Fiorella_0
+      213: -3260658483611383700
+    second: lys_idle_0
   - first:
-      213: 7637890751014911475
-    second: Fiorella_1
+      213: -2234147405891594885
+    second: lys_idle_1
   - first:
-      213: 1600179408220177771
-    second: Fiorella_2
+      213: -350902261564796803
+    second: lys_idle_2
   - first:
-      213: -786867215375189317
-    second: Fiorella_3
+      213: -2543815937386954603
+    second: lys_idle_3
   - first:
-      213: 444596451710195810
-    second: Fiorella_4
+      213: -4766435659606281135
+    second: lys_idle_4
   - first:
-      213: 1940758345321515553
-    second: Fiorella_5
+      213: 6260754378268456092
+    second: lys_idle_5
   - first:
-      213: 3599724720419555859
-    second: Fiorella_6
+      213: 6335061233429131577
+    second: lys_idle_6
   - first:
-      213: -2033532943322562771
-    second: Fiorella_7
-  - first:
-      213: 1249610544070107378
-    second: Fiorella_8
-  - first:
-      213: -8931288459260411129
-    second: Fiorella_9
-  - first:
-      213: -922113196082563580
-    second: Fiorella_10
-  - first:
-      213: -8526760387848951055
-    second: Fiorella_11
-  - first:
-      213: -7434510936436962002
-    second: Fiorella_12
-  - first:
-      213: -8894887347814251232
-    second: Fiorella_13
-  - first:
-      213: 2257923203834334309
-    second: Fiorella_14
+      213: -2850286524068590997
+    second: lys_idle_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -93,7 +72,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 250
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -117,7 +96,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -142,123 +121,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Fiorella_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 384
-        width: 384
-        height: 384
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f770b500f04d99430800000000000000
-      internalID: 3790293722304546687
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Fiorella_1
-      rect:
-        serializedVersion: 2
-        x: 384
-        y: 384
-        width: 384
-        height: 384
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 3fd3c77bb2d3ff960800000000000000
-      internalID: 7637890751014911475
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Fiorella_2
-      rect:
-        serializedVersion: 2
-        x: 768
-        y: 384
-        width: 384
-        height: 384
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b65cbd391baf43610800000000000000
-      internalID: 1600179408220177771
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Fiorella_3
-      rect:
-        serializedVersion: 2
-        x: 1152
-        y: 384
-        width: 384
-        height: 384
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: bba3926cf6c7415f0800000000000000
-      internalID: -786867215375189317
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Fiorella_4
-      rect:
-        serializedVersion: 2
-        x: 1536
-        y: 384
-        width: 384
-        height: 384
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 268d5940e168b2600800000000000000
-      internalID: 444596451710195810
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Fiorella_5
+      name: lys_idle_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 384
-        height: 384
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -267,20 +136,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 12a83c7be65feea10800000000000000
-      internalID: 1940758345321515553
+      spriteID: c68ca768260dfb2d0800000000000000
+      internalID: -3260658483611383700
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fiorella_6
+      name: lys_idle_1
       rect:
         serializedVersion: 2
-        x: 384
+        x: 512
         y: 0
-        width: 384
-        height: 384
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -289,20 +158,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 31accc1af8ac4f130800000000000000
-      internalID: 3599724720419555859
+      spriteID: b7598f775c6bef0e0800000000000000
+      internalID: -2234147405891594885
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fiorella_7
+      name: lys_idle_2
       rect:
         serializedVersion: 2
-        x: 768
+        x: 1024
         y: 0
-        width: 384
-        height: 384
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -311,42 +180,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d2f343aef8077c3e0800000000000000
-      internalID: -2033532943322562771
+      spriteID: d709c849048512bf0800000000000000
+      internalID: -350902261564796803
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fiorella_8
-      rect:
-        serializedVersion: 2
-        x: 1152
-        y: 0
-        width: 384
-        height: 384
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2f0a1ea4b22875110800000000000000
-      internalID: 1249610544070107378
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Fiorella_9
+      name: lys_idle_3
       rect:
         serializedVersion: 2
         x: 1536
         y: 0
-        width: 384
-        height: 384
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -355,20 +202,108 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 703cc3f5770bd0480800000000000000
-      internalID: -8931288459260411129
+      spriteID: 590c216f1ec82bcd0800000000000000
+      internalID: -2543815937386954603
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fiorella_10
+      name: lys_idle_4
       rect:
         serializedVersion: 2
-        x: 53
-        y: 478
-        width: 290
-        height: 290
+        x: 2048
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 154b96075083addb0800000000000000
+      internalID: -4766435659606281135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lys_idle_5
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c94b9a6afeaa2e650800000000000000
+      internalID: 6260754378268456092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lys_idle_6
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93134e090a8aae750800000000000000
+      internalID: 6335061233429131577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lys_idle_7
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 0
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6a0fc0028fb178d0800000000000000
+      internalID: -2850286524068590997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: lys_idle_8
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 164
+        width: 280
+        height: 280
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -377,8 +312,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9665a7ed97833fe429699df40783a889
-      internalID: -1221782746
+      spriteID: 8d4fecda8cab69a4c9509f47adb8f8a2
+      internalID: 30192422
       vertices: []
       indices: 
       edges: []
@@ -387,7 +322,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: d01602c9def6c594eb79057ad893cdc9
+    spriteID: 28818b95154205a44b63d92f8362793c
     internalID: 0
     vertices: []
     indices: 
@@ -397,19 +332,17 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":5.0,"y":2.0},"gridSpriteSize":{"x":384.0,"y":384.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":8.0,"y":1.0},"gridSpriteSize":{"x":512.0,"y":512.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Fiorella_0: 3790293722304546687
-      Fiorella_1: 7637890751014911475
-      Fiorella_10: -1221782746
-      Fiorella_2: 1600179408220177771
-      Fiorella_3: -786867215375189317
-      Fiorella_4: 444596451710195810
-      Fiorella_5: 1940758345321515553
-      Fiorella_6: 3599724720419555859
-      Fiorella_7: -2033532943322562771
-      Fiorella_8: 1249610544070107378
-      Fiorella_9: -8931288459260411129
+      lys_idle_0: -3260658483611383700
+      lys_idle_1: -2234147405891594885
+      lys_idle_2: -350902261564796803
+      lys_idle_3: -2543815937386954603
+      lys_idle_4: -4766435659606281135
+      lys_idle_5: 6260754378268456092
+      lys_idle_6: 6335061233429131577
+      lys_idle_7: -2850286524068590997
+      lys_idle_8: 30192422
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
