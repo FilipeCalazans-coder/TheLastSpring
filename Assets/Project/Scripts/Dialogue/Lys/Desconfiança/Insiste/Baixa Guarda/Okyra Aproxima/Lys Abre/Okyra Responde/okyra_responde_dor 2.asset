@@ -19,6 +19,6 @@ MonoBehaviour:
   - Eram. Antes.
   options:
   - playerChoiceText: Continuar
-    nextDialogue: {fileID: 0}
+    nextDialogue: {fileID: 11400000, guid: f24477744651d964eb81ec70433847c1, type: 2}
     actionName: 
   freezePlayer: 1

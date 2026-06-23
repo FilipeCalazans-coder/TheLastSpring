@@ -19,6 +19,6 @@ MonoBehaviour:
   - Eu sinto muito.
   options:
   - playerChoiceText: Continuar
-    nextDialogue: {fileID: 0}
+    nextDialogue: {fileID: 11400000, guid: 1ec29b90b31a79849a8965c62f415d02, type: 2}
     actionName: 
   freezePlayer: 1

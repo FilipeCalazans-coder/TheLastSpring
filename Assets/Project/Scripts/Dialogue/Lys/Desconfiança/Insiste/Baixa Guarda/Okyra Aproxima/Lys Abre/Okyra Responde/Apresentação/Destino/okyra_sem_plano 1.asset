@@ -19,6 +19,6 @@ MonoBehaviour:
   - "Ainda n\xE3o sei direito. Mas ficar aqui n\xE3o \xE9 uma op\xE7\xE3o."
   options:
   - playerChoiceText: Continuar
-    nextDialogue: {fileID: 0}
+    nextDialogue: {fileID: 11400000, guid: 71dc6118359fa0441be83eb338c5f3de, type: 2}
     actionName: 
   freezePlayer: 1

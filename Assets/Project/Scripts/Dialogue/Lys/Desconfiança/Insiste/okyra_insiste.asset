@@ -21,6 +21,6 @@ MonoBehaviour:
     vi."
   options:
   - playerChoiceText: Continuar
-    nextDialogue: {fileID: 0}
+    nextDialogue: {fileID: 11400000, guid: a93163a3ecc1c9d49b0f13f02a4232c6, type: 2}
     actionName: 
   freezePlayer: 1

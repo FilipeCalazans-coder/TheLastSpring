@@ -20,6 +20,6 @@ MonoBehaviour:
   - Sim. Antes.
   options:
   - playerChoiceText: Continuar
-    nextDialogue: {fileID: 0}
+    nextDialogue: {fileID: 11400000, guid: 08b4c36bcfafef64a835bee505233b84, type: 2}
     actionName: 
   freezePlayer: 1

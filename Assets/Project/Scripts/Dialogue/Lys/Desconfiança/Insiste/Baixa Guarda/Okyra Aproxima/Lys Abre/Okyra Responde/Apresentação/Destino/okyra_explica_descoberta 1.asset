@@ -20,6 +20,6 @@ MonoBehaviour:
   - Itauba.
   options:
   - playerChoiceText: "Voc\xEA conhece?"
-    nextDialogue: {fileID: 0}
+    nextDialogue: {fileID: 11400000, guid: bae057bf95437f040909efe5f05e3293, type: 2}
     actionName: 
   freezePlayer: 1

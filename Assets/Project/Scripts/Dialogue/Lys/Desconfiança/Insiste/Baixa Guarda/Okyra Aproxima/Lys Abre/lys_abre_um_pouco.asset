@@ -20,5 +20,8 @@ MonoBehaviour:
   - Era o nome dela.
   - "Morreu procurando flores que ainda n\xE3o estivessem contaminadas."
   - Todas elas morreram assim.
-  options: []
+  options:
+  - playerChoiceText: Continuar
+    nextDialogue: {fileID: 11400000, guid: b09a392acae8dee4a9b3fb00993048dd, type: 2}
+    actionName: 
   freezePlayer: 1
