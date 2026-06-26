@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Player\\Flash.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Project\\Scripts\\Player\\Flash.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Hud\\PlayerHUD.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Project\\Scripts\\Hud\\PlayerHUD.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Enemy\\EnemyIA.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Project\\Scripts\\Enemy\\EnemyIA.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Shaders\\ContaminatedSprite.shader||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Project\\Shaders\\ContaminatedSprite.shader||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Shaders\\ContaminedSprite.shader||{3B902123-F8A7-4915-9F01-361F908088D0}",
@@ -17,6 +17,14 @@
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Enemy\\EnemyDamage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Project\\Scripts\\Enemy\\EnemyDamage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Player\\Flash.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Project\\Scripts\\Player\\Flash.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Enemy\\EnemyIA.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Project\\Scripts\\Enemy\\EnemyIA.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Enemy\\EnemyPathFinding.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -79,15 +87,40 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "PlayerHUD.cs",
+              "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Hud\\PlayerHUD.cs",
+              "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Hud\\PlayerHUD.cs",
+              "ToolTip": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Hud\\PlayerHUD.cs",
+              "RelativeToolTip": "Assets\\Project\\Scripts\\Hud\\PlayerHUD.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-25T23:04:27.998Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ContaminatedSprite.shader",
+              "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Shaders\\ContaminatedSprite.shader",
+              "RelativeDocumentMoniker": "Assets\\Project\\Shaders\\ContaminatedSprite.shader",
+              "ToolTip": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Shaders\\ContaminatedSprite.shader",
+              "RelativeToolTip": "Assets\\Project\\Shaders\\ContaminatedSprite.shader",
+              "ViewState": "AgIAAIwAAAAAAAAAAAAAwLQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-06-11T06:20:17.21Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "Flash.cs",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Player\\Flash.cs",
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Player\\Flash.cs",
               "ToolTip": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Player\\Flash.cs",
               "RelativeToolTip": "Assets\\Project\\Scripts\\Player\\Flash.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAAC8AAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-06T02:59:07.874Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-06T02:59:07.874Z"
             },
             {
               "$type": "Document",
@@ -97,10 +130,9 @@
               "RelativeDocumentMoniker": "Assets\\Project\\Shaders\\ContaminedSprite.shader",
               "ToolTip": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Shaders\\ContaminedSprite.shader",
               "RelativeToolTip": "Assets\\Project\\Shaders\\ContaminedSprite.shader",
-              "ViewState": "AgIAAIYAAAAAAAAAAAAuwKIAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAACgAAAAAAAAAAAAAwFAAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2026-06-06T02:16:14.126Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-06T02:16:14.126Z"
             },
             {
               "$type": "Document",
@@ -110,14 +142,13 @@
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Enemy\\EnemyDamage.cs",
               "ToolTip": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Enemy\\EnemyDamage.cs",
               "RelativeToolTip": "Assets\\Project\\Scripts\\Enemy\\EnemyDamage.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-03T07:17:14.98Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-03T07:17:14.98Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "EnemyPathFinding.cs",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Enemy\\EnemyPathFinding.cs",
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Enemy\\EnemyPathFinding.cs",
@@ -125,12 +156,11 @@
               "RelativeToolTip": "Assets\\Project\\Scripts\\Enemy\\EnemyPathFinding.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-03T06:30:56.831Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-03T06:30:56.831Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 5,
               "Title": "EnemyIA.cs",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Enemy\\EnemyIA.cs",
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Enemy\\EnemyIA.cs",
@@ -138,12 +168,11 @@
               "RelativeToolTip": "Assets\\Project\\Scripts\\Enemy\\EnemyIA.cs",
               "ViewState": "AgIAANEAAAAAAAAAAAAqwPMAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-03T04:41:03.85Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-03T04:41:03.85Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "ToxicResin.shader",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Shaders\\ToxicResin.shader",
               "RelativeDocumentMoniker": "Assets\\Project\\Shaders\\ToxicResin.shader",
@@ -155,7 +184,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "PlayerFeetMarker.cs",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Player\\PlayerFeetMarker.cs",
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Player\\PlayerFeetMarker.cs",
@@ -167,7 +196,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "GridEditorUtility.cs",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Library\\PackageCache\\com.unity.2d.tilemap@f011712243ad\\Editor\\GridEditorUtility.cs",
               "RelativeDocumentMoniker": "Library\\PackageCache\\com.unity.2d.tilemap@f011712243ad\\Editor\\GridEditorUtility.cs",
@@ -179,7 +208,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 12,
               "Title": "ToxicResinShapeEditor.cs",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Hazards\\Editor\\ToxicResinShapeEditor.cs",
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Hazards\\Editor\\ToxicResinShapeEditor.cs",
@@ -191,7 +220,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "ToxicResinShape.cs",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Hazards\\ToxicResinShape.cs",
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Hazards\\ToxicResinShape.cs",
@@ -203,7 +232,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 13,
               "Title": "Triangulator.cs",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Hazards\\Triangulator.cs",
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Hazards\\Triangulator.cs",
@@ -215,7 +244,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "HazardToxinResin.cs",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Hazards\\HazardToxinResin.cs",
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Hazards\\HazardToxinResin.cs",
@@ -227,7 +256,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 15,
               "Title": "PlayerToxicResinReceiver.cs",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Player\\PlayerToxicResinReceiver.cs",
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Player\\PlayerToxicResinReceiver.cs",
@@ -239,7 +268,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 16,
               "Title": "BaseStats.cs",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Player\\Status\\BaseStats.cs",
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Player\\Status\\BaseStats.cs",
@@ -251,7 +280,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 17,
               "Title": "PlayerStamina.cs",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Player\\Status\\PlayerStamina.cs",
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Player\\Status\\PlayerStamina.cs",
@@ -263,7 +292,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 14,
               "Title": "PlayerController.cs",
               "DocumentMoniker": "D:\\INFNET - Jogos Digitais\\Projeto RPG\\TheLastSpring\\Assets\\Project\\Scripts\\Player\\PlayerController.cs",
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Player\\PlayerController.cs",

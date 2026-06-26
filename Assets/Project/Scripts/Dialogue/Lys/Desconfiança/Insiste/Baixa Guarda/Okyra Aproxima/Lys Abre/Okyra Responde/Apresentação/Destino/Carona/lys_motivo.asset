@@ -17,7 +17,7 @@ MonoBehaviour:
   flipPortrait: 1
   npcLines:
   - ...
-  - "Voc\xEA n\xE3o pediu permiss\xE3o para ficar quando mandei voc\xEA sumir."
+  - "Mesmo quando te mandei embora, voc\xEA ficou. N\xE3o pra me atacar, apenas ficou."
   - "Isso \xE9 tudo."
   options:
   - playerChoiceText: Aceito. Obrigada.

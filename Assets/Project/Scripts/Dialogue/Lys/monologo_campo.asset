@@ -16,8 +16,7 @@ MonoBehaviour:
   npcPortrait: {fileID: -1221782746, guid: b55a8814655e0f741ac6c381992fd7e8, type: 3}
   flipPortrait: 0
   npcLines:
-  - "H\xE1 quanto tempo estou andando?"
   - "Flores mortas. Todas da minha esp\xE9cie."
   - "Ser\xE1 que elas... tiveram o m\xEDnimo de chance de n\xE3o acabar assim?"
   options: []
-  freezePlayer: 0
+  freezePlayer: 1

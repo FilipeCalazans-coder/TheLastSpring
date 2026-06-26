@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Project.Scripts.Dialogue;
 
 public class Sword : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class Sword : MonoBehaviour
     private ActiveWeapon activeWeapon;
     private GameObject slashAnim;
     private bool attackButtonDown, isAttacking = false;
+    private bool _isDialogueActive = false;
 
     private void Awake()
     {
@@ -26,6 +28,21 @@ public class Sword : MonoBehaviour
     private void OnEnable()
     {
         playerControls.Enable();
+        DialogueManager.OnDialogueStateChanged += HandleDialogueState;
+    }
+
+    private void OnDisable()
+    {
+        playerControls.Disable();
+        DialogueManager.OnDialogueStateChanged -= HandleDialogueState;
+    }
+
+    private void HandleDialogueState(bool freeze)
+    {
+        _isDialogueActive = freeze;
+        // Zera input residual: se o player apertou o clique antes do diálogo abrir,
+        // garantimos que ele não fica "preso" como apertado
+        if (freeze) attackButtonDown = false;
     }
 
     void Start()
@@ -56,6 +73,7 @@ public class Sword : MonoBehaviour
         // ==========================================
         // CORREÇÃO: Impede a espadada e o gasto de estamina no pause
         // ==========================================
+        if (_isDialogueActive) return;
         if (Time.timeScale == 0f) return;
 
         if (attackButtonDown && !isAttacking)

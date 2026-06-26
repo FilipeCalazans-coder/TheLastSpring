@@ -23,6 +23,6 @@ MonoBehaviour:
     nextDialogue: {fileID: 11400000, guid: 797940d198113a44fa09ff0c58172706, type: 2}
     actionName: 
   - playerChoiceText: Tudo bem. Fico aqui.
-    nextDialogue: {fileID: 0}
+    nextDialogue: {fileID: 11400000, guid: 6933697f7c67f8c4899ba0a18a699697, type: 2}
     actionName: 
   freezePlayer: 1

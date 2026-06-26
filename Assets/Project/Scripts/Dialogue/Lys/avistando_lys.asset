@@ -16,7 +16,6 @@ MonoBehaviour:
   npcPortrait: {fileID: -1221782746, guid: b55a8814655e0f741ac6c381992fd7e8, type: 3}
   flipPortrait: 0
   npcLines:
-  - Uma abelha.
-  - Viva.
+  - Uma abelha. Viva!
   options: []
   freezePlayer: 1
